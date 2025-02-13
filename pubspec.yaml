@@ -1,0 +1,62 @@
+# Project Metadata
+name: ai_store
+description: "AI Store"
+publish_to: 'none'
+version: 1.0.0+1
+
+# Environment Constraints
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+# Dependencies
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+  get: ^4.6.6
+  http: ^1.2.2
+  shared_preferences: ^2.2.3
+  fluttertoast: ^8.2.6
+  flutter_screenutil: ^5.9.3
+  google_fonts: ^6.2.1
+  animated_text_kit: ^4.2.2
+  flutter_onboarding_slider: ^1.0.11
+  flutter_svg: ^2.0.10+1
+  carousel_slider: ^5.0.0
+  image_picker: ^1.1.2
+  pin_code_fields: ^8.0.1
+  flutter_credit_card: ^4.0.1
+  animated_custom_dropdown: ^3.1.1
+  connectivity_plus: ^6.1.2
+  intl: ^0.20.2
+  cached_network_image: ^3.4.1
+  webview_flutter: ^4.10.0
+  flutter_rounded_date_picker: ^3.0.4
+
+# Development Dependencies
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+# Flutter Configuration
+flutter:
+  uses-material-design: true
+
+  # Assets
+  assets:
+    - assets/logos/
+    - assets/onboarding/
+    - assets/icons/
+    - assets/icons/profile/
+    - assets/icons/drawer/
+    - assets/images/banners/
+    - assets/images/category/
+    - assets/images/products/
+    - assets/images/drawer_image/
+    - assets/images/sign_up/
+    - assets/images/combo/
+    - assets/gif/
+    - assets/images/others/
+
