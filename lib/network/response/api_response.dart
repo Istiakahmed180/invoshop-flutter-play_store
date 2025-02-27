@@ -1,4 +1,4 @@
-import 'package:ai_store/network/response/status.dart';
+import 'package:invoshop/network/response/status.dart';
 
 class ApiResponse<T> {
   final Status? status;

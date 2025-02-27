@@ -1,7 +1,7 @@
-import 'package:ai_store/common/controller/categories_controller.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/category/views/components/category_card.dart';
+import 'package:invoshop/common/controller/categories_controller.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/category/views/components/category_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

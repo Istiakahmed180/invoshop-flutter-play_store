@@ -1,7 +1,9 @@
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/customer/controller/customer_controller.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/customer/controller/customer_controller.dart';
+import 'package:invoshop/screens/customer/view/add_customer/add_customer.dart';
+import 'package:invoshop/screens/customer/view/edit_customer/edit_customer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -45,7 +47,9 @@ class _CustomerScreenState extends State<CustomerScreen> {
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: AppColors.groceryPrimary,
-          onPressed: () {},
+          onPressed: () {
+            Get.to(AddCustomer());
+          },
           child: Icon(
             Icons.add,
             size: 30.w,
@@ -67,23 +71,23 @@ class _CustomerScreenState extends State<CustomerScreen> {
               border: TableBorder(
                 borderRadius: BorderRadius.circular(4.r),
                 horizontalInside: BorderSide(
-                  color: AppColors.groceryPrimary.withOpacity(0.2),
+                  color: AppColors.groceryPrimary.withValues(alpha: 0.2),
                   width: 0.5,
                 ),
                 verticalInside: BorderSide(
-                  color: AppColors.groceryPrimary.withOpacity(0.2),
+                  color: AppColors.groceryPrimary.withValues(alpha: 0.2),
                   width: 0.5,
                 ),
               ),
               headingRowColor: WidgetStateProperty.all(
-                AppColors.groceryPrimary.withOpacity(0.1),
+                AppColors.groceryPrimary.withValues(alpha: 0.1),
               ),
               dataRowColor: WidgetStateProperty.resolveWith(
                 (states) {
                   if (states.contains(WidgetState.selected)) {
-                    return AppColors.groceryPrimary.withOpacity(0.2);
+                    return AppColors.groceryPrimary.withValues(alpha: 0.2);
                   }
-                  return AppColors.groceryPrimary.withOpacity(0.05);
+                  return AppColors.groceryPrimary.withValues(alpha: 0.05);
                 },
               ),
               horizontalMargin: 15,
@@ -143,7 +147,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
               style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 0.h),
                 side: BorderSide(
-                  color: AppColors.groceryPrimary.withOpacity(0.5),
+                  color: AppColors.groceryPrimary.withValues(alpha: 0.5),
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6.r),
@@ -164,7 +168,9 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   ),
                   items: [
                     PopupMenuItem<String>(
-                      onTap: () {},
+                      onTap: () {
+                        Get.to(EditCustomer(customer: customer));
+                      },
                       value: 'Edit',
                       child: const Row(
                         children: [

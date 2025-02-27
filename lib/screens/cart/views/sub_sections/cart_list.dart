@@ -1,15 +1,16 @@
-import 'package:ai_store/common/controller/checkout_controller.dart';
-import 'package:ai_store/common/controller/wish_cart_list_controller.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/cart/views/sub_sections/order_summary.dart';
-import 'package:ai_store/screens/home/model/products_model.dart' as model;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/checkout_controller.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/controller/wish_cart_list_controller.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/cart/views/sub_sections/order_summary.dart';
+import 'package:invoshop/screens/home/model/products_model.dart' as model;
 
 class CartList extends StatefulWidget {
   const CartList({super.key});
@@ -23,6 +24,7 @@ class _CartListState extends State<CartList> {
       Get.put(WishListAndCartListController());
   final CheckoutController checkoutController = Get.put(CheckoutController());
   final TextEditingController couponController = TextEditingController();
+  final CurrencyController currencyController = Get.put(CurrencyController());
   final Map<String, TextEditingController> _quantityControllers = {};
   final Map<String, FocusNode> _focusNodes = {};
 
@@ -181,10 +183,10 @@ class _CartListState extends State<CartList> {
                                   color: AppColors.groceryTitle),
                             ),
                             Text(
-                              "500Gm",
+                              _formatWeight(product.weight!),
                               style: TextStyle(
-                                fontSize: 12.sp,
                                 color: AppColors.groceryTextTwo,
+                                fontSize: 12,
                               ),
                             ),
                           ],
@@ -204,7 +206,7 @@ class _CartListState extends State<CartList> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        '\$${productPrice.toStringAsFixed(2)}',
+                        '${currencyController.currencySymbol}${productPrice.toStringAsFixed(2)}',
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: AppColors.groceryPrimary,
@@ -335,7 +337,7 @@ class _CartListState extends State<CartList> {
           ),
         ),
         Text(
-          '\$${value.toStringAsFixed(2)}',
+          '${currencyController.currencySymbol}${value.toStringAsFixed(2)}',
           style: TextStyle(
             fontSize: 14.sp,
             color: AppColors.groceryPrimary,
@@ -344,5 +346,18 @@ class _CartListState extends State<CartList> {
         ),
       ],
     );
+  }
+
+  String _formatWeight(String weight) {
+    try {
+      double parsedWeight = double.parse(weight);
+      if (parsedWeight < 1000) {
+        return "${parsedWeight.toInt()}Gm";
+      } else {
+        return "${(parsedWeight / 1000).toStringAsFixed(2)}Kg";
+      }
+    } catch (e) {
+      return "N/A";
+    }
   }
 }

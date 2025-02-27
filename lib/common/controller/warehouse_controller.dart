@@ -1,8 +1,8 @@
-import 'package:ai_store/common/model/warehouse_model.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/network/response/status.dart';
-import 'package:ai_store/network/services/network_services.dart';
+import 'package:invoshop/common/model/warehouse_model.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/network/response/status.dart';
+import 'package:invoshop/network/services/network_services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,6 +40,27 @@ class WarehouseController extends GetxController {
       }
     } catch (e) {
       _showErrorToast('An error occurred while fetching warehouses');
+    }
+  }
+
+  Future<void> deleteWarehouse({required String warehouseId}) async {
+    isLoading.value = true;
+    try {
+      final String url =
+          await ApiPath.deleteWarehouseEndpoint(warehouseId: warehouseId);
+      final response = await _networkService.delete(url);
+      isLoading.value = false;
+      if (response.status == Status.completed) {
+        Fluttertoast.showToast(
+            msg: response.data!["message"],
+            backgroundColor: AppColors.groceryPrimary);
+        await loadWarehouse();
+      } else {
+        _showErrorToast(response.message ?? 'Failed to delete warehouse');
+      }
+    } catch (e) {
+      isLoading.value = false;
+      _showErrorToast('An error occurred while deleting warehouse');
     }
   }
 

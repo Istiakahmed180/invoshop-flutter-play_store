@@ -1,13 +1,18 @@
-import 'package:ai_store/common/controller/orders_controller.dart';
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/controller/orders_controller.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/constants/user_role.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -18,11 +23,14 @@ class OrdersScreen extends StatefulWidget {
 
 class _OrdersScreenState extends State<OrdersScreen> {
   final OrdersController ordersController = Get.put(OrdersController());
+  final CurrencyController currencyController = Get.put(CurrencyController());
   late Map<int, Future<String>> imageFutures;
+  Map<String, dynamic>? user;
 
   @override
   void initState() {
     super.initState();
+    loadUser();
     imageFutures = {};
   }
 
@@ -31,8 +39,24 @@ class _OrdersScreenState extends State<OrdersScreen> {
         index, () => ApiPath.getImageUrl(imagePath));
   }
 
+  Future<void> loadUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? userData = prefs.getString("user");
+    if (userData != null && userData.isNotEmpty) {
+      setState(() {
+        user = jsonDecode(userData);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (user == null) {
+      return CustomLoading(
+        withOpacity: 0.0,
+      );
+    }
+
     return Scaffold(
       appBar: const CustomAppBar(appBarName: "Orders"),
       body: Obx(() {
@@ -52,8 +76,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
             children: [
               Column(
                 children: [
-                  SizedBox(height: 10.h),
-                  _buildAcceptAllButton(),
+                  if (user!["user_role"] == UserRole.vendor)
+                    SizedBox(height: 10.h),
+                  if (user!["user_role"] == UserRole.vendor)
+                    _buildAcceptAllButton(),
                   SizedBox(height: 10.h),
                   _buildDataTable(),
                   SizedBox(height: 16.h),
@@ -90,7 +116,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       child: Align(
         alignment: AlignmentDirectional.centerStart,
         child: CustomElevatedButton(
-          buttonName: "Update All",
+          buttonName: "Accept All",
           onPressed: () async {
             if (ordersController.selectedRows.contains(true)) {
               showDialog(
@@ -163,23 +189,24 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   List<DataColumn> _buildTableColumns() {
     return [
-      DataColumn(
-        label: Checkbox(
-          value: ordersController.isHeaderChecked.value,
-          onChanged: (bool? value) {
-            ordersController.toggleAllCheckboxes();
-          },
-          activeColor: AppColors.groceryPrimary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-          ),
-          side: BorderSide(
-            color: AppColors.groceryPrimary.withOpacity(0.4),
-            width: 1.0,
+      if (user!["user_role"] == UserRole.vendor)
+        DataColumn(
+          label: Checkbox(
+            value: ordersController.isHeaderChecked.value,
+            onChanged: (bool? value) {
+              ordersController.toggleAllCheckboxes();
+            },
+            activeColor: AppColors.groceryPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
+            side: BorderSide(
+              color: AppColors.groceryPrimary.withOpacity(0.4),
+              width: 1.0,
+            ),
           ),
         ),
-      ),
-      _buildTableHeader("SL"),
+      _buildTableHeader("Order ID"),
       _buildTableHeader("Image"),
       _buildTableHeader("Name"),
       _buildTableHeader("Code"),
@@ -189,7 +216,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       _buildTableHeader("Size Variant"),
       _buildTableHeader("Price"),
       _buildTableHeader("Status"),
-      _buildTableHeader("Action"),
+      if (user!["user_role"] == UserRole.vendor) _buildTableHeader("Action"),
     ];
   }
 
@@ -222,25 +249,29 @@ class _OrdersScreenState extends State<OrdersScreen> {
           }
         },
         cells: [
-          DataCell(
-            Checkbox(
-              value: ordersController.selectedRows[index],
-              onChanged: (bool? value) {
-                ordersController.selectedRows[index] = value ?? false;
-                ordersController.isHeaderChecked.value =
-                    ordersController.selectedRows.every((element) => element);
-              },
-              activeColor: AppColors.groceryPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
-              ),
-              side: BorderSide(
-                color: AppColors.groceryPrimary.withOpacity(0.4),
-                width: 1.0,
+          if (user!["user_role"] == UserRole.vendor)
+            DataCell(
+              Checkbox(
+                value: ordersController.selectedRows[index],
+                onChanged: (bool? value) {
+                  ordersController.selectedRows[index] = value ?? false;
+                  ordersController.isHeaderChecked.value =
+                      ordersController.selectedRows.every((element) => element);
+                },
+                activeColor: AppColors.groceryPrimary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                side: BorderSide(
+                  color: AppColors.groceryPrimary.withOpacity(0.4),
+                  width: 1.0,
+                ),
               ),
             ),
-          ),
-          DataCell(Center(child: Text('${index + 1}'))),
+          DataCell(Center(
+              child: Text(order.orderProductId != null
+                  ? order.orderProductId.toString()
+                  : "N/A"))),
           DataCell(Center(
             child: FutureBuilder<String>(
               future: _getImageFuture(
@@ -298,7 +329,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
           ),
           DataCell(Center(
             child: Text(
-              '\$${order.orderProduct!.product?.price ?? '0.00'}',
+              '${currencyController.currencySymbol}${order.orderProduct!.product?.price ?? '0.00'}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 12.sp,
@@ -307,46 +338,48 @@ class _OrdersScreenState extends State<OrdersScreen> {
             ),
           )),
           _buildDataCell(order.status ?? 'N/A'),
-          DataCell(
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 0.h),
-                side: BorderSide(
-                  color: AppColors.groceryPrimary.withOpacity(0.5),
+          if (user!["user_role"] == UserRole.vendor)
+            DataCell(
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 0.h),
+                  side: BorderSide(
+                    color: AppColors.groceryPrimary.withOpacity(0.5),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6.r),
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6.r),
-                ),
-              ),
-              onPressed: () {
-                if (ordersController.selectedRows.contains(true)) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => _buildAcceptAlertDialog(
-                      acceptType: "Update",
-                      onTap: () async {
-                        Get.back();
-                        await ordersController.postOrderStatusUpdate();
-                      },
-                    ),
-                  );
-                } else {
-                  Fluttertoast.showToast(
-                    msg: "No products selected",
-                    backgroundColor: AppColors.grocerySecondary,
-                  );
-                }
-              },
-              child: const Text(
-                "Update Status",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.groceryPrimary,
-                  fontWeight: FontWeight.bold,
+                onPressed: () {
+                  if (ordersController.selectedRows.contains(true)) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => _buildAcceptAlertDialog(
+                        acceptType: "Update",
+                        onTap: () async {
+                          Get.back();
+                          await ordersController.postOrderStatusUpdate();
+                        },
+                      ),
+                    );
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: "No products selected",
+                      backgroundColor: AppColors.grocerySecondary,
+                    );
+                  }
+                },
+                child: const Text(
+                  "Update Status",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.groceryPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       );
     }).toList();
@@ -394,7 +427,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       actionsAlignment: MainAxisAlignment.center,
       actions: [
         CustomElevatedButton(
-          buttonName: "Confirm, update it!",
+          buttonName: "Confirm",
           onPressed: onTap,
         ),
         CustomElevatedButton(

@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:ai_store/common/controller/wish_cart_list_controller.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/constants/user_role.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/home/model/products_model.dart' as model;
-import 'package:ai_store/screens/product_details/views/product_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/controller/wish_cart_list_controller.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/constants/user_role.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/home/model/products_model.dart' as model;
+import 'package:invoshop/screens/product_details/views/product_details_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SpecialOffersCard extends StatefulWidget {
@@ -25,6 +26,7 @@ class SpecialOffersCard extends StatefulWidget {
 class SpecialOffersCardState extends State<SpecialOffersCard> {
   final WishListAndCartListController wishListAndCartListController =
       Get.put(WishListAndCartListController());
+  final CurrencyController currencyController = Get.put(CurrencyController());
   Duration _timeLeft =
       const Duration(days: 2, hours: 3, minutes: 45, seconds: 30);
   Timer? _timer;
@@ -220,29 +222,39 @@ class SpecialOffersCardState extends State<SpecialOffersCard> {
                           Row(
                             children: [
                               ...List.generate(5, (index) {
-                                if (index < 4.0.floor()) {
+                                double rating = double.tryParse(widget
+                                            .product.productReviewsAvgRating
+                                            ?.toString() ??
+                                        "0.0") ??
+                                    0.0;
+
+                                if (index < rating.floor()) {
+                                  // Full star
                                   return const Icon(
                                     Icons.star,
                                     color: AppColors.groceryRating,
-                                    size: 12,
+                                    size: 15,
                                   );
-                                } else if (index < 4.0 && index + 1 > 4.0) {
+                                } else if (index < rating &&
+                                    index >= rating.floor()) {
+                                  // Half star
                                   return const Icon(
                                     Icons.star_half,
                                     color: AppColors.groceryRating,
-                                    size: 12,
+                                    size: 15,
                                   );
                                 } else {
+                                  // Empty star
                                   return const Icon(
                                     Icons.star_border,
-                                    color: AppColors.groceryRatingGray,
-                                    size: 12,
+                                    color: AppColors.groceryRating,
+                                    size: 15,
                                   );
                                 }
                               }),
                               const SizedBox(width: 2),
-                              const Text(
-                                "(4.0)",
+                              Text(
+                                "(${widget.product.productReviewsCount ?? 0})",
                                 style: TextStyle(
                                   color: AppColors.groceryTextTwo,
                                   fontSize: 12,
@@ -260,31 +272,16 @@ class SpecialOffersCardState extends State<SpecialOffersCard> {
                             ),
                           ),
                           const SizedBox(height: 8.0),
-                          Row(
-                            children: [
-                              Text(
-                                '\$${double.tryParse(widget.product.salePrice!)! == 0 && double.tryParse(widget.product.salePrice!)! > double.tryParse(widget.product.price!)! ? widget.product.salePrice! : widget.product.price!}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.groceryPrimary,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              if (double.tryParse(widget.product.salePrice!)! >
-                                  0)
-                                Text(
-                                  '\$${widget.product.price}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    decoration: TextDecoration.lineThrough,
-                                    color: AppColors.groceryTextTwo,
-                                  ),
-                                ),
-                            ],
+                          Text(
+                            '${currencyController.currencySymbol}${double.tryParse(widget.product.salePrice!)}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.groceryPrimary,
+                            ),
                           ),
                           const SizedBox(height: 8.0),
-                          const Row(
+                          Row(
                             children: [
                               Text(
                                 'Available: ',
@@ -295,7 +292,7 @@ class SpecialOffersCardState extends State<SpecialOffersCard> {
                               ),
                               SizedBox(width: 2),
                               Text(
-                                '2025 Products',
+                                '${widget.product.availableStock} Products',
                                 style: TextStyle(
                                   color: AppColors.groceryPrimary,
                                   fontSize: 12.0,

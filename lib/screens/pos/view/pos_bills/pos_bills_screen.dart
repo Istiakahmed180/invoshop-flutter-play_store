@@ -1,18 +1,19 @@
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/custom_label_text.dart';
-import 'package:ai_store/common/widgets/dropdown/custom_dropdown_field.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/home/model/products_model.dart';
-import 'package:ai_store/screens/pos/controller/pos_bills_controller.dart';
-import 'package:ai_store/screens/pos/controller/pos_controller.dart';
-import 'package:ai_store/screens/pos/view/pos_make_payment/pos_make_payment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/custom_label_text.dart';
+import 'package:invoshop/common/widgets/dropdown/custom_dropdown_field.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/home/model/products_model.dart';
+import 'package:invoshop/screens/pos/controller/pos_bills_controller.dart';
+import 'package:invoshop/screens/pos/controller/pos_controller.dart';
+import 'package:invoshop/screens/pos/view/pos_make_payment/pos_make_payment.dart';
 
 class PosBillsScreen extends StatefulWidget {
   const PosBillsScreen({super.key});
@@ -23,6 +24,7 @@ class PosBillsScreen extends StatefulWidget {
 
 class _PosBillsScreenState extends State<PosBillsScreen> {
   final PosBillsController posBillsController = Get.put(PosBillsController());
+  final CurrencyController currencyController = Get.put(CurrencyController());
   final PosController posController = Get.put(PosController());
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -350,18 +352,18 @@ class _PosBillsScreenState extends State<PosBillsScreen> {
                                           DataCell(
                                             Center(
                                               child: Text(
-                                                "${product.tax} ${product.taxType == "Percent" ? "%" : "\$"}",
+                                                "${product.tax} ${product.taxType == "Percent" ? "%" : "${currencyController.currencySymbol}"}",
                                               ),
                                             ),
                                           ),
                                           DataCell(Center(
                                             child: Text(
-                                              "${product.discount} ${product.discountType == "Percent" ? "%" : "\$"}",
+                                              "${product.discount} ${product.discountType == "Percent" ? "%" : "${currencyController.currencySymbol}"}",
                                             ),
                                           )),
                                           DataCell(Center(
                                             child: Text(
-                                              "\$${product.price}",
+                                              "${currencyController.currencySymbol}${product.price}",
                                             ),
                                           )),
                                           DataCell(Row(
@@ -461,7 +463,7 @@ class _PosBillsScreenState extends State<PosBillsScreen> {
                                           )),
                                           DataCell(Center(
                                             child: Text(
-                                              "\$${posBillsController.subtotals[index].toStringAsFixed(2)}",
+                                              "${currencyController.currencySymbol}${posBillsController.subtotals[index].toStringAsFixed(2)}",
                                             ),
                                           )),
                                           DataCell(
@@ -631,22 +633,22 @@ class _PosBillsScreenState extends State<PosBillsScreen> {
                   )),
                   DataCell(Center(
                     child: Text(
-                      "\$${totalBasePrice.toStringAsFixed(2)}",
+                      "${currencyController.currencySymbol}${totalBasePrice.toStringAsFixed(2)}",
                     ),
                   )),
                   DataCell(Center(
                     child: Text(
-                      "\$${posBillsController.totalTax.toStringAsFixed(2)}",
+                      "${currencyController.currencySymbol}${posBillsController.totalTax.toStringAsFixed(2)}",
                     ),
                   )),
                   DataCell(Center(
                     child: Text(
-                      "\$${posBillsController.totalDiscount.toStringAsFixed(2)}",
+                      "${currencyController.currencySymbol}${posBillsController.totalDiscount.toStringAsFixed(2)}",
                     ),
                   )),
                   DataCell(Center(
                     child: Text(
-                      "\$${posBillsController.totalSubtotals.toStringAsFixed(2)}",
+                      "${currencyController.currencySymbol}${posBillsController.totalSubtotals.toStringAsFixed(2)}",
                     ),
                   )),
                 ])
@@ -691,7 +693,7 @@ class _PosBillsScreenState extends State<PosBillsScreen> {
           border: Border.all(
               color: AppColors.groceryPrimary.withAlpha(50), width: 1)),
       child: Text(
-        "Grand Total : \$${posBillsController.totalSubtotals.toStringAsFixed(2)}",
+        "Grand Total : ${currencyController.currencySymbol}${posBillsController.totalSubtotals.toStringAsFixed(2)}",
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700),
       ),

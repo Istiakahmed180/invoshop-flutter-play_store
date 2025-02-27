@@ -1,5 +1,5 @@
-import 'package:ai_store/config/routes/routes.dart';
-import 'package:ai_store/constants/app_colors.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
 import 'package:get/route_manager.dart';
@@ -17,9 +17,9 @@ class OnboardingScreen extends StatelessWidget {
         top: false,
         child: OnBoardingSlider(
           pageBackgroundColor: Colors.white,
-          finishButtonText: "Find Supplier",
+          finishButtonText: "Find Domain",
           onFinish: () {
-            Get.offNamed(BaseRoute.findSupplier);
+            Get.offNamed(BaseRoute.findDomain);
           },
           finishButtonStyle: const FinishButtonStyle(
             backgroundColor: AppColors.groceryPrimary,

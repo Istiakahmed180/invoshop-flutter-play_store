@@ -1,8 +1,8 @@
-import 'package:ai_store/config/routes/routes.dart';
-import 'package:ai_store/config/routes/routes_handler.dart';
-import 'package:ai_store/config/theme/dark_theme.dart';
-import 'package:ai_store/config/theme/light_theme.dart';
-import 'package:ai_store/constants/app_strings.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/config/routes/routes_handler.dart';
+import 'package:invoshop/config/theme/dark_theme.dart';
+import 'package:invoshop/config/theme/light_theme.dart';
+import 'package:invoshop/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

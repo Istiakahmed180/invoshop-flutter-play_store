@@ -1,15 +1,16 @@
-import 'package:ai_store/common/controller/checkout_controller.dart';
-import 'package:ai_store/common/controller/wish_cart_list_controller.dart';
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/custom_label_text.dart';
-import 'package:ai_store/common/widgets/dropdown/custom_dropdown_field.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/make_payment/view/make_payment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/checkout_controller.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/controller/wish_cart_list_controller.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/custom_label_text.dart';
+import 'package:invoshop/common/widgets/dropdown/custom_dropdown_field.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/make_payment/view/make_payment_screen.dart';
 
 class OrderSummary extends StatefulWidget {
   const OrderSummary({super.key});
@@ -22,6 +23,7 @@ class _OrderSummaryState extends State<OrderSummary> {
   final CheckoutController checkoutController = Get.put(CheckoutController());
   final WishListAndCartListController wishListAndCartListController =
       Get.put(WishListAndCartListController());
+  final CurrencyController currencyController = Get.put(CurrencyController());
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -143,7 +145,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                   ),
                   Obx(
                     () => Text(
-                      "\$${wishListAndCartListController.total.value.toStringAsFixed(2)}",
+                      "${currencyController.currencySymbol}${wishListAndCartListController.total.value.toStringAsFixed(2)}",
                       style: const TextStyle(
                           fontSize: 14,
                           color: AppColors.groceryText,
@@ -235,7 +237,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                   }
                 },
                 child: Text(
-                  "\$${checkoutController.insideCost.value}/kg Inside Dhaka",
+                  "${currencyController.currencySymbol}${checkoutController.insideCost.value}/kg Inside Dhaka",
                   style: const TextStyle(
                       fontSize: 14, color: AppColors.groceryText),
                 ),
@@ -290,7 +292,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                   }
                 },
                 child: Text(
-                  "\$${checkoutController.outsideCost.value}/kg Outside Dhaka",
+                  "${currencyController.currencySymbol}${checkoutController.outsideCost.value}/kg Outside Dhaka",
                   style: const TextStyle(
                       fontSize: 14, color: AppColors.groceryText),
                 ),
@@ -396,7 +398,7 @@ class _OrderSummaryState extends State<OrderSummary> {
             style: const TextStyle(fontSize: 14, color: AppColors.groceryText),
           ),
           Text(
-            '\$${value.toStringAsFixed(2)}',
+            '${currencyController.currencySymbol}${value.toStringAsFixed(2)}',
             style: const TextStyle(
               fontSize: 14,
               color: AppColors.groceryPrimary,

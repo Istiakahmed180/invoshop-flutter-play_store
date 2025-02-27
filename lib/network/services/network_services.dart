@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 import 'dart:io';
 
-import 'package:ai_store/common/widgets/alert_dialog/custom_alert_dialog.dart';
-import 'package:ai_store/network/response/api_response.dart';
-import 'package:ai_store/screens/authentication/sign_in/controller/sign_in_controller.dart';
+import 'package:invoshop/common/widgets/alert_dialog/custom_alert_dialog.dart';
+import 'package:invoshop/network/response/api_response.dart';
+import 'package:invoshop/screens/authentication/sign_in/controller/sign_in_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;

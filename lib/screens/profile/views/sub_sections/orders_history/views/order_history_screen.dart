@@ -1,7 +1,7 @@
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/section_title.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/profile/views/sub_sections/orders_history/model/history_model.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/section_title.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/profile/views/sub_sections/orders_history/model/history_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';

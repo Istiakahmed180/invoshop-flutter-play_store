@@ -1,10 +1,11 @@
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/network/response/status.dart';
-import 'package:ai_store/network/services/network_services.dart';
-import 'package:ai_store/screens/order_return/model/order_return_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/constants/user_role.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/network/response/status.dart';
+import 'package:invoshop/network/services/network_services.dart';
+import 'package:invoshop/screens/order_return/model/order_return_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderReturnController extends GetxController {
@@ -24,9 +25,14 @@ class OrderReturnController extends GetxController {
   Future<void> getOrderReturns() async {
     isLoading.value = true;
     try {
+      final String? userRole = prefs.getString("user_role");
       final String? supplierId = prefs.getString("supplier_id");
-      final String url = await ApiPath.getOrderReturnsEndpoint(
-          supplierId: supplierId.toString());
+      final String? customerId = prefs.getString("customer_id");
+      final String url = userRole == UserRole.vendor
+          ? await ApiPath.getVendorOrderReturnsEndpoint(
+              supplierId: supplierId.toString())
+          : await ApiPath.getCustomerOrderReturnsEndpoint(
+              customerId: customerId.toString());
       final jsonResponse = await _networkService.get(url);
       isLoading.value = false;
       if (jsonResponse.status == Status.completed) {

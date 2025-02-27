@@ -1,8 +1,8 @@
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/wishlist/views/components/wishlist_cart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/wishlist/views/components/wishlist_cart.dart';
 
 class WishlistScreen extends StatefulWidget {
   const WishlistScreen({super.key});

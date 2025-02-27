@@ -1,41 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/termsCondition/views/components/cancellation_policy.dart';
-import 'package:ai_store/screens/termsCondition/views/components/privacy_policy.dart';
-import 'package:ai_store/screens/termsCondition/views/components/shipping_policy.dart';
-import 'package:ai_store/screens/termsCondition/views/components/terms_and_condition.dart';
+import 'package:get/get.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/termsCondition/controller/terms_condition_controller.dart';
+import 'package:invoshop/screens/termsCondition/views/components/privacy_policy.dart';
+import 'package:invoshop/screens/termsCondition/views/components/terms_and_condition.dart';
 
-class TermsConditionsScreen extends StatelessWidget {
+class TermsConditionsScreen extends StatefulWidget {
   const TermsConditionsScreen({super.key});
+
+  @override
+  State<TermsConditionsScreen> createState() => _TermsConditionsScreenState();
+}
+
+class _TermsConditionsScreenState extends State<TermsConditionsScreen> {
+  final TermsConditionController termsConditionController =
+      Get.put(TermsConditionController());
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    await termsConditionController.getPrivacyPolicyContent();
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: AppColors.groceryWhite,
+          backgroundColor: AppColors.groceryPrimary,
           elevation: 2,
           centerTitle: true,
           title: const Align(
             alignment: Alignment.topLeft,
             child: Text(
-              "Terms & Condition",
+              "Policy",
               style: TextStyle(
-                  color: AppColors.groceryTitle,
+                  color: AppColors.groceryWhite,
                   fontSize: 18,
                   fontWeight: FontWeight.w600),
             ),
           ),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: AppColors.groceryWhite,
+            ),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
-          bottom: const TabBar(
+          bottom: TabBar(
+            onTap: (int? value) async {
+              termsConditionController.selectedTab.value = value ?? 0;
+              if (termsConditionController.selectedTab.value == 0) {
+                await termsConditionController.getPrivacyPolicyContent();
+              } else {
+                await termsConditionController.getTermsAndConditionContent();
+              }
+            },
             isScrollable: true,
-            indicatorColor: AppColors.groceryPrimary,
+            indicatorColor: AppColors.groceryWhite,
             labelStyle: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -44,8 +73,8 @@ class TermsConditionsScreen extends StatelessWidget {
               fontSize: 14,
               fontWeight: FontWeight.normal,
             ),
-            labelColor: AppColors.groceryPrimary,
-            unselectedLabelColor: AppColors.groceryTitle,
+            labelColor: AppColors.groceryWhite,
+            unselectedLabelColor: Colors.white60,
             tabs: [
               Tab(
                 child: Text("Privacy & Policy"),
@@ -53,21 +82,19 @@ class TermsConditionsScreen extends StatelessWidget {
               Tab(
                 child: Text("Terms & Condition"),
               ),
-              Tab(
-                child: Text("Cancellation Policy"),
-              ),
-              Tab(
-                child: Text("Shipping Policy"),
-              ),
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            PrivacyPolicy(),
-            TermsAndCondition(),
-            CancellationPolicy(),
-            ShippingPolicy(),
+            PrivacyPolicy(
+              type: "Privacy Policy",
+              termsConditionController: termsConditionController,
+            ),
+            TermsAndCondition(
+              type: "Terms and Condition",
+              termsConditionController: termsConditionController,
+            ),
           ],
         ),
       ),

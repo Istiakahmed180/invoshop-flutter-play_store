@@ -1,13 +1,17 @@
-import 'package:ai_store/common/controller/wish_cart_list_controller.dart';
-import 'package:ai_store/config/routes/routes.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/products/controller/products_controller.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/wish_cart_list_controller.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/constants/user_role.dart';
+import 'package:invoshop/screens/products/controller/products_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProductsHeader extends StatelessWidget {
+class ProductsHeader extends StatefulWidget {
   final ProductsController productsController;
   final WishListAndCartListController wishListAndCartListController;
 
@@ -17,7 +21,34 @@ class ProductsHeader extends StatelessWidget {
       required this.wishListAndCartListController});
 
   @override
+  State<ProductsHeader> createState() => _ProductsHeaderState();
+}
+
+class _ProductsHeaderState extends State<ProductsHeader> {
+  Map<String, dynamic>? user;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? userData = prefs.getString("user");
+    if (userData != null && userData.isNotEmpty) {
+      setState(() {
+        user = jsonDecode(userData);
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (user == null || user!["user_role"] == null) {
+      return const SizedBox();
+    }
+
     return Column(
       children: [
         _buildHeaderRow(context),
@@ -43,17 +74,10 @@ class ProductsHeader extends StatelessWidget {
       onTap: () {
         Scaffold.of(context).openDrawer();
       },
-      child: Row(
-        children: [
-          Image.asset(
-            "assets/logos/logo-splash.png",
-            width: MediaQuery.of(context).size.width * 0.07,
-          ),
-          Text(
-            "Invoshop",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
-          ),
-        ],
+      child: Image.asset(
+        "assets/logos/logo_bg.png",
+        width: MediaQuery.of(context).size.width * 0.3,
+        height: 30,
       ),
     );
   }
@@ -62,17 +86,27 @@ class ProductsHeader extends StatelessWidget {
     return Row(
       children: [
         Obx(
-          () => _buildIconWithBadge(
-            iconPath: 'assets/icons/heart-bold.svg',
-            badgeCount: wishListAndCartListController.wishlistItemCount.value,
-            onTap: () => Get.toNamed(BaseRoute.myWishlist),
+          () => Visibility(
+            visible: user!["user_role"] == UserRole.customer ||
+                user!["user_role"] == UserRole.vendor,
+            child: _buildIconWithBadge(
+              iconPath: 'assets/icons/heart-bold.svg',
+              badgeCount:
+                  widget.wishListAndCartListController.wishlistItemCount.value,
+              onTap: () => Get.toNamed(BaseRoute.myWishlist),
+            ),
           ),
         ),
         Obx(
-          () => _buildIconWithBadge(
-            iconPath: 'assets/icons/bag-icon.svg',
-            badgeCount: wishListAndCartListController.cartItemCount.value,
-            onTap: () => Get.toNamed(BaseRoute.cart),
+          () => Visibility(
+            visible: user!["user_role"] == UserRole.customer ||
+                user!["user_role"] == UserRole.vendor,
+            child: _buildIconWithBadge(
+              iconPath: 'assets/icons/bag-icon.svg',
+              badgeCount:
+                  widget.wishListAndCartListController.cartItemCount.value,
+              onTap: () => Get.toNamed(BaseRoute.cart),
+            ),
           ),
         ),
       ],
@@ -111,7 +145,7 @@ class ProductsHeader extends StatelessWidget {
       children: [
         Expanded(
           child: TextField(
-            controller: productsController.searchController,
+            controller: widget.productsController.searchController,
             decoration: const InputDecoration(
               prefixIcon: Icon(
                 Icons.search,
@@ -138,12 +172,12 @@ class ProductsHeader extends StatelessWidget {
         ),
         OutlinedButton(
             onPressed: () {
-              productsController
-                  .searchProducts(productsController.searchController.text);
+              widget.productsController.searchProducts(
+                  widget.productsController.searchController.text);
             },
             style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 14, horizontal: 10.w),
-                side: BorderSide(color: Colors.grey.withOpacity(0.2)),
+                side: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4.r))),
             child: const Text("Search",

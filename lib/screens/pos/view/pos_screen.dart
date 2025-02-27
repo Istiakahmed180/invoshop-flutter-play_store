@@ -1,17 +1,18 @@
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/home/model/products_model.dart' as model;
-import 'package:ai_store/screens/pos/controller/pos_controller.dart';
-import 'package:ai_store/screens/pos/view/pos_bills/pos_bills_screen.dart';
-import 'package:ai_store/screens/pos/view/sub_sections/brand_modal.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/home/model/products_model.dart' as model;
+import 'package:invoshop/screens/pos/controller/pos_controller.dart';
+import 'package:invoshop/screens/pos/view/pos_bills/pos_bills_screen.dart';
+import 'package:invoshop/screens/pos/view/sub_sections/brand_modal.dart';
 
 class PosScreen extends StatefulWidget {
   const PosScreen({super.key});
@@ -22,6 +23,7 @@ class PosScreen extends StatefulWidget {
 
 class _PosScreenState extends State<PosScreen> {
   final PosController posController = Get.put(PosController());
+  final CurrencyController currencyController = Get.put(CurrencyController());
 
   @override
   void initState() {
@@ -243,7 +245,7 @@ class _PosScreenState extends State<PosScreen> {
                       ),
                       SizedBox(height: 2.h),
                       Text(
-                        "\$${product.price ?? '0.00'}",
+                        "${currencyController.currencySymbol}${product.price ?? '0.00'}",
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: AppColors.groceryPrimary.withOpacity(0.7),

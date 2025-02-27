@@ -1,19 +1,19 @@
 import 'dart:convert';
 
-import 'package:ai_store/common/widgets/alert_dialog/custom_alert_dialog.dart';
-import 'package:ai_store/common/widgets/custom_common_title.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/config/routes/routes.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/constants/user_role.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/authentication/sign_in/controller/sign_in_controller.dart';
-import 'package:ai_store/screens/profile/views/sub_sections/profile_edit/profile_edit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/widgets/alert_dialog/custom_alert_dialog.dart';
+import 'package:invoshop/common/widgets/custom_common_title.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/constants/user_role.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/authentication/sign_in/controller/sign_in_controller.dart';
+import 'package:invoshop/screens/profile/views/sub_sections/profile_edit/profile_edit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -185,35 +185,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            _buildMenuItem(
-                "Orders history", "assets/icons/profile/orders_history.svg",
-                () {
-              Get.toNamed(BaseRoute.orderHistory);
-            }),
             Visibility(
-              visible: user!["user_role"] == UserRole.customer,
+              visible: user!["user_role"] == UserRole.customer ||
+                  user!["user_role"] == UserRole.vendor ||
+                  user!["user_role"] == UserRole.admin ||
+                  user!["user_role"] == UserRole.superAdmin,
+              child: _buildMenuItem(
+                  "Orders history", "assets/icons/profile/orders_history.svg",
+                  () {
+                user?["user_role"] == UserRole.vendor ||
+                        user?["user_role"] == UserRole.admin ||
+                        user?["user_role"] == UserRole.superAdmin
+                    ? Get.toNamed(BaseRoute.orders)
+                    : Get.toNamed(BaseRoute.customerOrders);
+              }),
+            ),
+            Visibility(
+              visible: user!["user_role"] == UserRole.customer ||
+                  user!["user_role"] == UserRole.vendor,
               child: _buildMenuItem(
                   "Wishlist", "assets/icons/profile/wishlist.svg", () {
                 Get.toNamed(BaseRoute.myWishlist);
               }),
             ),
             Visibility(
-              visible: user!["user_role"] == UserRole.customer,
+              visible: user!["user_role"] == UserRole.customer ||
+                  user!["user_role"] == UserRole.vendor,
               child: _buildMenuItem(
                   "My Cart", "assets/icons/profile/add-to-cart.svg", () {
                 Get.toNamed(BaseRoute.cart);
               }),
             ),
-            _buildMenuItem("Reviews", "assets/icons/profile/review.svg", () {
-              Get.toNamed(BaseRoute.reviews);
-            }),
-            _buildMenuItem("My coupons", "assets/icons/profile/coupon.svg", () {
-              Get.toNamed(BaseRoute.myCoupon);
-            }),
-            _buildMenuItem(
-                "Transaction", "assets/icons/profile/transaction.svg", () {
-              Get.toNamed(BaseRoute.transactions);
-            }),
+            Visibility(
+              visible: user!["user_role"] == UserRole.customer,
+              child: _buildMenuItem(
+                  "Reviews", "assets/icons/profile/review.svg", () {
+                Get.toNamed(BaseRoute.reviews);
+              }),
+            ),
+            Visibility(
+              visible: user!["user_role"] == UserRole.admin ||
+                  user!["user_role"] == UserRole.superAdmin,
+              child: _buildMenuItem(
+                  "My coupons", "assets/icons/profile/coupon.svg", () {
+                Get.toNamed(BaseRoute.myCoupon);
+              }),
+            ),
+            Visibility(
+              visible: user!["user_role"] == UserRole.customer ||
+                  user!["user_role"] == UserRole.admin ||
+                  user!["user_role"] == UserRole.superAdmin,
+              child: _buildMenuItem(
+                  "Transaction", "assets/icons/profile/transaction.svg", () {
+                Get.toNamed(BaseRoute.transactions);
+              }),
+            ),
             _buildMenuItem("Sign out", "assets/icons/drawer/sign_out.svg", () {
               _showLogoutConfirmation(context, signInController);
             }),

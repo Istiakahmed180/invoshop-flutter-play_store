@@ -1,13 +1,14 @@
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/new_order/controller/new_order_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/new_order/controller/new_order_controller.dart';
 
 class NewOrderScreen extends StatefulWidget {
   const NewOrderScreen({super.key});
@@ -18,6 +19,7 @@ class NewOrderScreen extends StatefulWidget {
 
 class _NewOrderScreenState extends State<NewOrderScreen> {
   final NewOrderController newOrderController = Get.put(NewOrderController());
+  final CurrencyController currencyController = Get.put(CurrencyController());
   late Map<int, Future<String>> imageFutures;
 
   @override
@@ -26,9 +28,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     imageFutures = {};
   }
 
-  Future<String> _getImageFuture(int index, String imagePath) {
+  Future<String> _getImageFuture(int index, String? imagePath) {
     return imageFutures.putIfAbsent(
-        index, () => ApiPath.getImageUrl(imagePath));
+        index, () => ApiPath.getImageUrl(imagePath ?? ''));
   }
 
   @override
@@ -118,9 +120,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   Widget _buildDataTable() {
     return Expanded(
       child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 12.w),
           scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(4.r),
             child: DataTable(
@@ -136,17 +139,15 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   width: 0.5,
                 ),
               ),
-              headingRowColor: WidgetStateProperty.all(
+              headingRowColor: MaterialStateProperty.all(
                 AppColors.groceryPrimary.withOpacity(0.1),
               ),
-              dataRowColor: WidgetStateProperty.resolveWith(
-                (states) {
-                  if (states.contains(WidgetState.selected)) {
-                    return AppColors.groceryPrimary.withOpacity(0.2);
-                  }
-                  return AppColors.groceryPrimary.withOpacity(0.05);
-                },
-              ),
+              dataRowColor: MaterialStateProperty.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return AppColors.groceryPrimary.withOpacity(0.2);
+                }
+                return AppColors.groceryPrimary.withOpacity(0.05);
+              }),
               horizontalMargin: 15,
               columnSpacing: 40,
               headingRowHeight: 60,
@@ -179,7 +180,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           ),
         ),
       ),
-      _buildTableHeader("SL"),
+      _buildTableHeader("Order ID"),
       _buildTableHeader("Image"),
       _buildTableHeader("Name"),
       _buildTableHeader("Code"),
@@ -195,13 +196,14 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   DataColumn _buildTableHeader(String label) {
     return DataColumn(
-      headingRowAlignment: MainAxisAlignment.center,
-      label: Text(
-        label,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: AppColors.groceryPrimary,
-          fontSize: 12.sp,
+      label: Center(
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppColors.groceryPrimary,
+            fontSize: 12.sp,
+          ),
         ),
       ),
     );
@@ -209,8 +211,26 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   List<DataRow> _buildTableRows() {
     return newOrderController.newOrderList.asMap().entries.map((entry) {
-      final index = entry.key;
+      final int index = entry.key;
       final order = entry.value;
+
+      // Safely access product details
+      final String productName = order.product?.title ?? 'N/A';
+      final String productCode = order.product?.productCode ?? 'N/A';
+      final String category = (order.product?.categories?.isNotEmpty ?? false)
+          ? order.product!.categories!.first.title ?? 'N/A'
+          : 'N/A';
+      final String unit = order.product?.unit?.name ?? 'N/A';
+      final String colorVariant =
+          (order.product?.colorVariant?.isNotEmpty ?? false)
+              ? order.product!.colorVariant!.first.name ?? 'N/A'
+              : 'N/A';
+      final String sizeVariant =
+          (order.product?.sizeVariant?.isNotEmpty ?? false)
+              ? order.product!.sizeVariant!.first.name ?? 'N/A'
+              : 'N/A';
+      final String price = order.product?.price ?? '0.00';
+      final String saleStatus = order.saleStatus ?? 'N/A';
 
       return DataRow(
         selected: newOrderController.selectedRows[index],
@@ -241,72 +261,63 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               ),
             ),
           ),
-          DataCell(Center(child: Text('${index + 1}'))),
           DataCell(Center(
-            child: FutureBuilder<String>(
-              future: _getImageFuture(index, order.product!.image!.path!),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox();
-                }
-                if (snapshot.hasError) {
-                  return const Icon(
-                    Icons.broken_image,
-                    size: 50,
-                    color: AppColors.groceryBorder,
-                  );
-                }
-                return CircleAvatar(
-                  backgroundColor: AppColors.groceryPrimary.withOpacity(0.05),
-                  radius: 25,
-                  child: Padding(
-                    padding: REdgeInsets.all(4),
-                    child: FadeInImage.assetNetwork(
-                      placeholder: "assets/gif/loading.gif",
-                      image: snapshot.data!,
-                      imageErrorBuilder: (context, error, stackTrace) =>
-                          const Icon(
-                        Icons.broken_image,
-                        color: AppColors.groceryRatingGray,
+              child: Text(
+                  order.orderId != null ? order.orderId.toString() : "N/A"))),
+          DataCell(
+            Center(
+              child: FutureBuilder(
+                future: _getImageFuture(index, order.product?.image?.path),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox();
+                  }
+                  if (snapshot.hasError || snapshot.data == null) {
+                    return Icon(
+                      Icons.broken_image,
+                      size: 50,
+                      color: AppColors.groceryBorder,
+                    );
+                  }
+                  return CircleAvatar(
+                    backgroundColor: AppColors.groceryPrimary.withOpacity(0.05),
+                    radius: 25,
+                    child: Padding(
+                      padding: REdgeInsets.all(4),
+                      child: FadeInImage.assetNetwork(
+                        placeholder: "assets/gif/loading.gif",
+                        image: snapshot.data!,
+                        imageErrorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                          Icons.broken_image,
+                          color: AppColors.groceryRatingGray,
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          )),
-          _buildDataCell(order.product!.title ?? 'N/A'),
-          _buildDataCell(order.product!.productCode ?? 'N/A'),
-          _buildDataCell(
-            (order.product?.categories != null &&
-                    order.product!.categories!.isNotEmpty)
-                ? order.product!.categories![0].title ?? "N/A"
-                : "N/A",
-          ),
-          _buildDataCell(order.product!.unit!.name ?? "N/A"),
-          _buildDataCell(
-            (order.product?.colorVariant != null &&
-                    order.product!.colorVariant!.isNotEmpty)
-                ? order.product!.colorVariant![0].name ?? "N/A"
-                : "N/A",
-          ),
-          _buildDataCell(
-            (order.product?.sizeVariant != null &&
-                    order.product!.sizeVariant!.isNotEmpty)
-                ? order.product!.sizeVariant![0].name ?? "N/A"
-                : "N/A",
-          ),
-          DataCell(Center(
-            child: Text(
-              '\$${order.product?.price ?? '0.00'}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 12.sp,
-                color: AppColors.groceryPrimary,
+                  );
+                },
               ),
             ),
-          )),
-          _buildDataCell(order.saleStatus ?? 'N/A'),
+          ),
+          _buildDataCell(productName),
+          _buildDataCell(productCode),
+          _buildDataCell(category),
+          _buildDataCell(unit),
+          _buildDataCell(colorVariant),
+          _buildDataCell(sizeVariant),
+          DataCell(
+            Center(
+              child: Text(
+                '${currencyController.currencySymbol}$price',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12.sp,
+                  color: AppColors.groceryPrimary,
+                ),
+              ),
+            ),
+          ),
+          _buildDataCell(saleStatus),
           DataCell(
             OutlinedButton(
               style: OutlinedButton.styleFrom(
@@ -363,8 +374,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     );
   }
 
-  Widget _buildAcceptAlertDialog(
-      {required String acceptType, required VoidCallback onTap}) {
+  Widget _buildAcceptAlertDialog({
+    required String acceptType,
+    required VoidCallback onTap,
+  }) {
     return AlertDialog(
       elevation: 0.5,
       backgroundColor: AppColors.groceryWhite,
@@ -375,7 +388,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
               color: AppColors.groceryWarning,
               size: 80,
@@ -384,8 +397,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             Text(
               textAlign: TextAlign.center,
               acceptType == "Accept"
-                  ? "Can you deliver this product?"
-                  : "Can you deliver selected product?",
+                  ? "Can you process this order?"
+                  : "Can you process selected orders?",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
             ),
           ],
@@ -394,7 +407,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
       actionsAlignment: MainAxisAlignment.center,
       actions: [
         CustomElevatedButton(
-          buttonName: "Confirm, accept it!",
+          buttonName: "Confirm",
           onPressed: onTap,
         ),
         CustomElevatedButton(

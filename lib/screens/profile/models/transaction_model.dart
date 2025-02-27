@@ -111,9 +111,11 @@ class OrderProducts {
   int? quantity;
   String? saleStatus;
   int? isAccepted;
+  int? isRefundRequested;
   String? status;
   String? createdAt;
   String? updatedAt;
+  int? productVariantId;
   Product? product;
 
   OrderProducts(
@@ -127,9 +129,11 @@ class OrderProducts {
       this.quantity,
       this.saleStatus,
       this.isAccepted,
+      this.isRefundRequested,
       this.status,
       this.createdAt,
       this.updatedAt,
+      this.productVariantId,
       this.product});
 
   OrderProducts.fromJson(Map<String, dynamic> json) {
@@ -143,9 +147,11 @@ class OrderProducts {
     quantity = json['quantity'];
     saleStatus = json['sale_status'];
     isAccepted = json['is_accepted'];
+    isRefundRequested = json['is_refund_requested'];
     status = json['status'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    productVariantId = json['product_variant_id'];
     product =
         json['product'] != null ? Product.fromJson(json['product']) : null;
   }

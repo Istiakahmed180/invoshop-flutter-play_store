@@ -1,19 +1,23 @@
-import 'package:ai_store/common/controller/checkout_controller.dart';
-import 'package:ai_store/common/controller/wish_cart_list_controller.dart';
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/custom_common_title.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/custom_label_text.dart';
-import 'package:ai_store/common/widgets/dropdown/custom_dropdown_field.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/home/model/products_model.dart' as model;
-import 'package:ai_store/screens/make_payment/controller/make_payment_controller.dart';
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/checkout_controller.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/controller/wish_cart_list_controller.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/custom_common_title.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/custom_label_text.dart';
+import 'package:invoshop/common/widgets/dropdown/custom_dropdown_field.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/home/model/products_model.dart' as model;
+import 'package:invoshop/screens/make_payment/controller/make_payment_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MakePaymentScreen extends StatefulWidget {
   final List<model.ProductsData> products;
@@ -30,9 +34,35 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
   final MakePaymentController makePaymentController =
       Get.put(MakePaymentController());
   final CheckoutController checkoutController = Get.put(CheckoutController());
+  final CurrencyController currencyController = Get.put(CurrencyController());
   final WishListAndCartListController wishListAndCartListController =
       Get.put(WishListAndCartListController());
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? userData = prefs.getString("user");
+    if (userData != null && userData.isNotEmpty) {
+      final user = jsonDecode(userData);
+      makePaymentController.billerFirstName.text =
+          user["user_first_name"] ?? "";
+      makePaymentController.shippingFirstName.text =
+          user["user_first_name"] ?? "";
+      makePaymentController.billerLastName.text = user["user_last_name"] ?? "";
+      makePaymentController.shippingLastName.text =
+          user["user_last_name"] ?? "";
+      makePaymentController.billerEmail.text = user["user_email"] ?? "";
+      makePaymentController.shippingEmail.text = user["user_email"] ?? "";
+      makePaymentController.billerPhone.text = user["user_phone"] ?? "";
+      makePaymentController.shippingPhone.text = user["user_phone"] ?? "";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -196,37 +226,6 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
             controller: makePaymentController.shippingPhone,
             hintText: "Phone",
             keyboardType: TextInputType.phone,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 12.w, right: 12.w, bottom: 10.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CustomLabelText(
-                  text: "Country",
-                  isRequired: true,
-                ),
-                SizedBox(
-                  height: 5.h,
-                ),
-                Obx(() => CustomDropdownField(
-                      dropdownItems: makePaymentController.countriesList.isEmpty
-                          ? ["Not Found"]
-                          : makePaymentController.countriesList
-                              .map((item) => item.title as String)
-                              .toList(),
-                      validatorText: "Country",
-                      hintText: "Select Country",
-                      onChanged: (String? value) {
-                        makePaymentController.shippingCountryId.value =
-                            makePaymentController.countriesList
-                                    .firstWhere((item) => item.title == value)
-                                    .id ??
-                                0;
-                      },
-                    )),
-              ],
-            ),
           ),
           _buildTextField(
             label: "City",
@@ -456,7 +455,7 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
                           ),
                         ),
                         Text(
-                          "\$${widget.totalAmount.toStringAsFixed(2)}",
+                          "${currencyController.currencySymbol}${widget.totalAmount.toStringAsFixed(2)}",
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: AppColors.groceryPrimary,
@@ -573,7 +572,7 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
                     ),
                     const SizedBox(height: 4.0),
                     Text(
-                      '\$${(double.parse(product.price.toString()) * double.parse(product.quantity.toString())).toStringAsFixed(2)}',
+                      '${currencyController.currencySymbol}${(double.parse(product.price.toString()) * double.parse(product.quantity.toString())).toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: AppColors.groceryPrimary,

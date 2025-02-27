@@ -1,7 +1,7 @@
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/brand/models/brands_model.dart';
-import 'package:ai_store/screens/pos/controller/pos_controller.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/brand/models/brands_model.dart';
+import 'package:invoshop/screens/pos/controller/pos_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

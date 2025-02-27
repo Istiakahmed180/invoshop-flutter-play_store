@@ -1,5 +1,7 @@
-import 'package:ai_store/screens/home/controller/home_controller.dart';
-import 'package:ai_store/screens/products/views/components/product_card.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/home/controller/home_controller.dart';
+import 'package:invoshop/screens/home/model/products_model.dart';
+import 'package:invoshop/screens/products/views/components/product_card.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,17 +17,32 @@ class ProductSlider extends StatelessWidget {
     final HomeController homeController = Get.put(HomeController());
 
     return Obx(() {
-      final int productCount = whichProductEndpoint == "Fresh Products"
-          ? homeController.freshProductList.length
-          : whichProductEndpoint == "New Arrivals Products"
-              ? homeController.newArrivalsProductList.length
-              : whichProductEndpoint == "Best Sellers Products"
-                  ? homeController.bestSellersProductList.length
-                  : whichProductEndpoint == "Trending Products"
-                      ? homeController.trendingProductList.length
-                      : whichProductEndpoint == "Featured Products"
-                          ? homeController.featuredProductList.length
-                          : homeController.exclusiveAppOnlyProductList.length;
+      final List<ProductsData> productList =
+          whichProductEndpoint == "Fresh Products"
+              ? homeController.freshProductList
+              : whichProductEndpoint == "New Arrivals Products"
+                  ? homeController.newArrivalsProductList
+                  : whichProductEndpoint == "Best Sellers Products"
+                      ? homeController.bestSellersProductList
+                      : whichProductEndpoint == "Trending Products"
+                          ? homeController.trendingProductList
+                          : whichProductEndpoint == "Featured Products"
+                              ? homeController.featuredProductList
+                              : homeController.exclusiveAppOnlyProductList;
+
+      if (productList.isEmpty) {
+        return Center(
+          child: Text(
+            'No products available',
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: AppColors.groceryPrimary.withValues(alpha: 0.5),
+            ),
+          ),
+        );
+      }
+
+      final int productCount = productList.length;
       final int totalSlides = (productCount ~/ 2) + (productCount % 2);
 
       return CarouselSlider.builder(
@@ -45,14 +62,14 @@ class ProductSlider extends StatelessWidget {
               if (firstIndex < productCount)
                 Expanded(
                   child: ProductCard(
-                    product: homeController.freshProductList[firstIndex],
+                    product: productList[firstIndex],
                   ),
                 ),
               SizedBox(width: 10.w),
               if (secondIndex < productCount)
                 Expanded(
                   child: ProductCard(
-                    product: homeController.freshProductList[secondIndex],
+                    product: productList[secondIndex],
                   ),
                 ),
             ],

@@ -1,12 +1,13 @@
 import 'dart:convert';
 
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/network/response/status.dart';
-import 'package:ai_store/network/services/network_services.dart';
-import 'package:ai_store/screens/orders/model/orders_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/constants/user_role.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/network/response/status.dart';
+import 'package:invoshop/network/services/network_services.dart';
+import 'package:invoshop/screens/orders/model/orders_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OrdersController extends GetxController {
@@ -70,9 +71,14 @@ class OrdersController extends GetxController {
   Future<void> getOrders() async {
     isLoading.value = true;
     final String? userId = prefs.getString("user_id");
+    final String? userRole = prefs.getString("user_role");
     try {
       final String url =
-          await ApiPath.getMyOrderEndpoint(userID: userId.toString());
+          userRole == UserRole.admin || userRole == UserRole.superAdmin
+              ? await ApiPath.getMyOrderEndpoint(
+                  userID: userId.toString(), role: userRole.toString())
+              : await ApiPath.getVendorOrderEndpoint(
+                  userID: userId.toString(), role: userRole.toString());
       final jsonResponse = await _networkService.get(url);
       isLoading.value = false;
       if (jsonResponse.status == Status.completed) {

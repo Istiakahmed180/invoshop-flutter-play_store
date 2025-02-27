@@ -1,13 +1,13 @@
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/custom_common_title.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/brand/controller/brand_controller.dart';
-import 'package:ai_store/screens/products/views/filtered_products_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/custom_common_title.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/brand/controller/brand_controller.dart';
+import 'package:invoshop/screens/products/views/filtered_products_screen.dart';
 
 class BrandScreen extends StatelessWidget {
   const BrandScreen({super.key});
@@ -104,29 +104,8 @@ class BrandScreen extends StatelessWidget {
                                       },
                                     ),
                                     const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          CustomTitleText(
-                                            title: brand.title!,
-                                          ),
-                                          const SizedBox(height: 3),
-                                          const Text(
-                                            "20 Products",
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColors.grocerySubTitle,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
-                                          ),
-                                        ],
-                                      ),
+                                    CustomTitleText(
+                                      title: brand.title!,
                                     ),
                                   ],
                                 ),

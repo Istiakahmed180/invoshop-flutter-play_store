@@ -1,7 +1,7 @@
-import 'package:ai_store/common/widgets/custom_common_title.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/section_title.dart';
-import 'package:ai_store/constants/app_colors.dart';
+import 'package:invoshop/common/widgets/custom_common_title.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/section_title.dart';
+import 'package:invoshop/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 

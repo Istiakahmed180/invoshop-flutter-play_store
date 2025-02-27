@@ -1,12 +1,12 @@
-import 'package:ai_store/common/controller/bottom_navigation_controller.dart';
-import 'package:ai_store/common/drawer/custom_drawer.dart';
-import 'package:ai_store/common/widgets/alert_dialog/custom_exit_confirmation_dialog.dart';
-import 'package:ai_store/common/widgets/bottom_navigation_bar.dart';
-import 'package:ai_store/screens/category/views/category_screen.dart';
-import 'package:ai_store/screens/home/views/components/home_container.dart';
-import 'package:ai_store/screens/products/controller/product_controller.dart';
-import 'package:ai_store/screens/products/views/products_screen.dart';
-import 'package:ai_store/screens/profile/views/profile_screen.dart';
+import 'package:invoshop/common/controller/bottom_navigation_controller.dart';
+import 'package:invoshop/common/drawer/custom_drawer.dart';
+import 'package:invoshop/common/widgets/alert_dialog/custom_exit_confirmation_dialog.dart';
+import 'package:invoshop/common/widgets/bottom_navigation_bar.dart';
+import 'package:invoshop/screens/category/views/category_screen.dart';
+import 'package:invoshop/screens/home/views/components/home_container.dart';
+import 'package:invoshop/screens/products/controller/product_controller.dart';
+import 'package:invoshop/screens/products/views/products_screen.dart';
+import 'package:invoshop/screens/profile/views/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

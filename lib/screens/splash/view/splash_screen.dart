@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:ai_store/config/routes/routes.dart';
-import 'package:ai_store/constants/app_colors.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/constants/app_colors.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -52,12 +52,12 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _moveToNextPage() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString("token");
-    final String? supplierKey = prefs.getString("supplier_key");
+    final String? domainKey = prefs.getString("domain_key");
     if (token != null && token.isNotEmpty) {
       Timer(const Duration(seconds: 5), () {
         Get.toNamed(BaseRoute.home);
       });
-    } else if (supplierKey != null && supplierKey.isNotEmpty) {
+    } else if (domainKey != null && domainKey.isNotEmpty) {
       Timer(const Duration(seconds: 5), () {
         Get.toNamed(BaseRoute.signIn);
       });
@@ -116,8 +116,8 @@ class _SplashScreenState extends State<SplashScreen>
                               ColorizeAnimatedText(
                                 "E-commerce Solutions",
                                 textStyle: TextStyle(
-                                    fontSize: 14.sp,
-                                    letterSpacing: 4.w,
+                                    fontSize: 15,
+                                    letterSpacing: 4,
                                     fontWeight: FontWeight.w600,
                                     shadows: const [
                                       Shadow(
@@ -153,7 +153,7 @@ class _SplashScreenState extends State<SplashScreen>
                           fontSize: 16.sp),
                     ),
                     Text(
-                      "V 1.0.1",
+                      "V 1.0.0",
                       style: TextStyle(color: Colors.grey, fontSize: 14.sp),
                     ),
                   ],

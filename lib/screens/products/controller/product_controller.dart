@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/category/models/category_data.dart';
-import 'package:ai_store/screens/products/models/product_data.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/category/models/category_data.dart';
+import 'package:invoshop/screens/products/models/product_data.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';

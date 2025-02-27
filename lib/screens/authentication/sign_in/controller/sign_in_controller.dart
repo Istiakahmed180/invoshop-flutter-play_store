@@ -1,14 +1,17 @@
 import 'dart:convert';
 
-import 'package:ai_store/config/routes/routes.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/constants/user_role.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/network/response/status.dart';
-import 'package:ai_store/network/services/network_services.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/controller/settings_controller.dart';
+import 'package:invoshop/common/controller/shared_preference_service.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/constants/user_role.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/network/response/status.dart';
+import 'package:invoshop/network/services/network_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInController extends GetxController {
@@ -67,6 +70,8 @@ class SignInController extends GetxController {
 
           Map<String, dynamic> user = {
             "user_id": userData["id"],
+            "user_first_name": userData["first_name"] ?? "",
+            "user_last_name": userData["last_name"] ?? "",
             "user_full_name": userFullName,
             "user_name": userData["username"],
             "user_role": roles[0]["name"],
@@ -85,14 +90,66 @@ class SignInController extends GetxController {
 
           String? route;
           if (roles.any((role) => role["name"] == UserRole.superAdmin)) {
+            final SettingsController settingsController =
+                Get.put(SettingsController());
+            await settingsController.getSettings();
+            final String currencyName = settingsController
+                .settingsModel.value.data!.settings!.general!.currencyName
+                .toString();
+            final String currencySymbol = settingsController
+                .settingsModel.value.data!.settings!.general!.currencySymbol
+                .toString();
+            final sharedPreferencesService = SharedPreferencesService();
+            await sharedPreferencesService.setCurrencyInfo(
+                currencyName, currencySymbol);
+            Get.put(CurrencyController());
             route = BaseRoute.home;
           } else if (roles.any((role) => role["name"] == UserRole.admin)) {
+            final SettingsController settingsController =
+                Get.put(SettingsController());
+            await settingsController.getSettings();
+            final String currencyName = settingsController
+                .settingsModel.value.data!.settings!.general!.currencyName
+                .toString();
+            final String currencySymbol = settingsController
+                .settingsModel.value.data!.settings!.general!.currencySymbol
+                .toString();
+            final sharedPreferencesService = SharedPreferencesService();
+            await sharedPreferencesService.setCurrencyInfo(
+                currencyName, currencySymbol);
+            Get.put(CurrencyController());
             route = BaseRoute.home;
           } else if (roles.any((role) => role["name"] == UserRole.vendor)) {
+            final SettingsController settingsController =
+                Get.put(SettingsController());
+            await settingsController.getSettings();
+            final String currencyName = settingsController
+                .settingsModel.value.data!.settings!.general!.currencyName
+                .toString();
+            final String currencySymbol = settingsController
+                .settingsModel.value.data!.settings!.general!.currencySymbol
+                .toString();
+            final sharedPreferencesService = SharedPreferencesService();
+            await sharedPreferencesService.setCurrencyInfo(
+                currencyName, currencySymbol);
+            Get.put(CurrencyController());
             final String supplierId = userData["profile"]["id"].toString();
             await prefs.setString("supplier_id", supplierId);
             route = BaseRoute.home;
           } else if (roles.any((role) => role["name"] == UserRole.customer)) {
+            final SettingsController settingsController =
+                Get.put(SettingsController());
+            await settingsController.getSettings();
+            final String currencyName = settingsController
+                .settingsModel.value.data!.settings!.general!.currencyName
+                .toString();
+            final String currencySymbol = settingsController
+                .settingsModel.value.data!.settings!.general!.currencySymbol
+                .toString();
+            final sharedPreferencesService = SharedPreferencesService();
+            await sharedPreferencesService.setCurrencyInfo(
+                currencyName, currencySymbol);
+            Get.put(CurrencyController());
             final String customerId = userData["profile"]["id"].toString();
             await prefs.setString("customer_id", customerId);
             route = BaseRoute.home;
@@ -136,6 +193,8 @@ class SignInController extends GetxController {
     await prefs.remove("user_name");
     await prefs.remove("user_full_name");
     await prefs.remove("user");
+    await prefs.remove("currency_symbol");
+    await prefs.remove("currency_name");
     Get.offAllNamed(BaseRoute.signIn);
   }
 }

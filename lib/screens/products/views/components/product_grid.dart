@@ -1,8 +1,8 @@
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/home/model/products_model.dart';
-import 'package:ai_store/screens/products/controller/products_controller.dart';
-import 'package:ai_store/screens/products/views/components/product_card.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/home/model/products_model.dart';
+import 'package:invoshop/screens/products/controller/products_controller.dart';
+import 'package:invoshop/screens/products/views/components/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

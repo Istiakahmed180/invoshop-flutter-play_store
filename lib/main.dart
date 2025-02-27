@@ -1,5 +1,5 @@
-import 'package:ai_store/app.dart';
-import 'package:ai_store/utils/dependency_injection.dart';
+import 'package:invoshop/app.dart';
+import 'package:invoshop/utils/dependency_injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

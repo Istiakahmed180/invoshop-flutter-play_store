@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:ai_store/common/controller/checkout_controller.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/home/model/products_model.dart';
+import 'package:invoshop/common/controller/checkout_controller.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/home/model/products_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';

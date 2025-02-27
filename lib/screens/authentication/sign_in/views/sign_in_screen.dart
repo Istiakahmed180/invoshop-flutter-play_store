@@ -1,10 +1,10 @@
-import 'package:ai_store/common/controller/bottom_navigation_controller.dart';
-import 'package:ai_store/common/widgets/alert_dialog/custom_exit_confirmation_dialog.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/config/routes/routes.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/authentication/sign_in/controller/sign_in_controller.dart';
+import 'package:invoshop/common/controller/bottom_navigation_controller.dart';
+import 'package:invoshop/common/widgets/alert_dialog/custom_exit_confirmation_dialog.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/authentication/sign_in/controller/sign_in_controller.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -159,11 +159,13 @@ class _SignInScreenState extends State<SignInScreen> {
     return TextButton(
       onPressed: () async {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.remove("supplier_key");
-        Get.offNamed(BaseRoute.findSupplier);
+        await prefs.remove("domain_key");
+        await prefs.remove("domain_name");
+        await prefs.remove("domain_id");
+        Get.offNamed(BaseRoute.findDomain);
       },
       child: Text(
-        "Find Supplier?",
+        "Find Domain?",
         style: TextStyle(
           color: AppColors.grocerySubTitle,
           fontSize: 14.sp,

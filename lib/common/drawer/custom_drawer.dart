@@ -1,19 +1,19 @@
 import 'dart:convert';
 
-import 'package:ai_store/common/controller/bottom_navigation_controller.dart';
-import 'package:ai_store/common/widgets/alert_dialog/custom_alert_dialog.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/web_view/custom_web_view_login.dart';
-import 'package:ai_store/config/routes/routes.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/constants/user_role.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/authentication/sign_in/controller/sign_in_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/bottom_navigation_controller.dart';
+import 'package:invoshop/common/widgets/alert_dialog/custom_alert_dialog.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/web_view/custom_web_view_login.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/constants/user_role.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/authentication/sign_in/controller/sign_in_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppDrawer extends StatefulWidget {
@@ -168,7 +168,8 @@ class _AppDrawerState extends State<AppDrawer> {
                 Visibility(
                   visible: user?["user_role"] == UserRole.vendor ||
                       user?["user_role"] == UserRole.superAdmin ||
-                      user?["user_role"] == UserRole.admin,
+                      user?["user_role"] == UserRole.admin ||
+                      user?["user_role"] == UserRole.customer,
                   child: _buildDrawerItem(
                     icon: "assets/icons/drawer/overview.svg",
                     title: "Overview",
@@ -208,7 +209,8 @@ class _AppDrawerState extends State<AppDrawer> {
                 Visibility(
                   visible: user?["user_role"] == UserRole.superAdmin ||
                       user?["user_role"] == UserRole.vendor ||
-                      user?["user_role"] == UserRole.admin,
+                      user?["user_role"] == UserRole.admin ||
+                      user?["user_role"] == UserRole.customer,
                   child: _buildDrawerItem(
                     icon: "assets/icons/drawer/pos-drawer.svg",
                     title: "POS",
@@ -216,9 +218,29 @@ class _AppDrawerState extends State<AppDrawer> {
                   ),
                 ),
                 Visibility(
-                  visible: user?["user_role"] == UserRole.vendor ||
-                      user?["user_role"] == UserRole.superAdmin ||
-                      user?["user_role"] == UserRole.admin,
+                  visible: user?["user_role"] == UserRole.superAdmin ||
+                      user?["user_role"] == UserRole.admin ||
+                      user?["user_role"] == UserRole.vendor ||
+                      user?["user_role"] == UserRole.customer,
+                  child: _buildDrawerItem(
+                    icon: "assets/icons/drawer/pos-drawer.svg",
+                    title: "Sale",
+                    onTap: () => Get.toNamed(BaseRoute.sale),
+                  ),
+                ),
+                Visibility(
+                  visible: user?["user_role"] == UserRole.superAdmin ||
+                      user?["user_role"] == UserRole.admin ||
+                      user?["user_role"] == UserRole.vendor ||
+                      user?["user_role"] == UserRole.customer,
+                  child: _buildDrawerItem(
+                    icon: "assets/icons/drawer/pos-drawer.svg",
+                    title: "Reports",
+                    onTap: () => Get.toNamed(BaseRoute.reports),
+                  ),
+                ),
+                Visibility(
+                  visible: user?["user_role"] == UserRole.vendor,
                   child: _buildDrawerItem(
                     icon: "assets/icons/drawer/new_order.svg",
                     title: "New Order",
@@ -226,14 +248,21 @@ class _AppDrawerState extends State<AppDrawer> {
                   ),
                 ),
                 Visibility(
-                  visible: user?["user_role"] == UserRole.vendor ||
-                      user?["user_role"] == UserRole.customer ||
+                  visible: user?["user_role"] == UserRole.admin ||
                       user?["user_role"] == UserRole.superAdmin ||
-                      user?["user_role"] == UserRole.admin,
+                      user?["user_role"] == UserRole.vendor ||
+                      user?["user_role"] == UserRole.customer,
                   child: _buildDrawerItem(
                     icon: "assets/icons/profile/orders_history.svg",
-                    title: "Orders",
-                    onTap: () => Get.toNamed(BaseRoute.orders),
+                    title: user?["user_role"] == UserRole.admin ||
+                            user?["user_role"] == UserRole.superAdmin
+                        ? "Orders"
+                        : "My Orders",
+                    onTap: () => user?["user_role"] == UserRole.vendor ||
+                            user?["user_role"] == UserRole.admin ||
+                            user?["user_role"] == UserRole.superAdmin
+                        ? Get.toNamed(BaseRoute.orders)
+                        : Get.toNamed(BaseRoute.customerOrders),
                   ),
                 ),
                 Visibility(
@@ -244,7 +273,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   child: _buildDrawerItem(
                     icon: "assets/icons/profile/review.svg",
                     title: "Reviews",
-                    onTap: () => Get.toNamed(BaseRoute.vendorReviews),
+                    onTap: () => Get.toNamed(BaseRoute.userReviews),
                   ),
                 ),
                 Visibility(
@@ -264,8 +293,8 @@ class _AppDrawerState extends State<AppDrawer> {
                       user?["user_role"] == UserRole.admin,
                   child: _buildDrawerItem(
                     icon: "assets/icons/drawer/payment_drawer.svg",
-                    title: "Payment",
-                    onTap: () => Get.toNamed(BaseRoute.payment),
+                    title: "Bank Account",
+                    onTap: () => Get.toNamed(BaseRoute.bankAccount),
                   ),
                 ),
                 Visibility(
@@ -284,6 +313,33 @@ class _AppDrawerState extends State<AppDrawer> {
                     icon: "assets/icons/drawer/user_management.svg",
                     title: "Customer",
                     onTap: () => Get.toNamed(BaseRoute.customer),
+                  ),
+                ),
+                Visibility(
+                  visible: user?["user_role"] == UserRole.superAdmin ||
+                      user?["user_role"] == UserRole.admin,
+                  child: _buildDrawerItem(
+                    icon: "assets/icons/drawer/user_management.svg",
+                    title: "Supplier",
+                    onTap: () => Get.toNamed(BaseRoute.supplier),
+                  ),
+                ),
+                Visibility(
+                  visible: user?["user_role"] == UserRole.superAdmin ||
+                      user?["user_role"] == UserRole.admin,
+                  child: _buildDrawerItem(
+                    icon: "assets/icons/drawer/user_management.svg",
+                    title: "Billers",
+                    onTap: () => Get.toNamed(BaseRoute.billers),
+                  ),
+                ),
+                Visibility(
+                  visible: user?["user_role"] == UserRole.superAdmin ||
+                      user?["user_role"] == UserRole.admin,
+                  child: _buildDrawerItem(
+                    icon: "assets/icons/drawer/user_management.svg",
+                    title: "Warehouse",
+                    onTap: () => Get.toNamed(BaseRoute.warehouse),
                   ),
                 ),
                 Visibility(
@@ -336,7 +392,7 @@ class _AppDrawerState extends State<AppDrawer> {
                       user?["user_role"] == UserRole.admin,
                   child: _buildDrawerItem(
                     icon: "assets/icons/drawer/terms.svg",
-                    title: "Terms & Condition",
+                    title: "Policy",
                     onTap: () => Get.toNamed(BaseRoute.termsCondition),
                   ),
                 ),

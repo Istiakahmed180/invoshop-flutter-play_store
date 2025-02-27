@@ -1,10 +1,11 @@
-import 'package:ai_store/common/widgets/section_title.dart';
-import 'package:ai_store/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:invoshop/common/widgets/section_title.dart';
+import 'package:invoshop/constants/app_colors.dart';
 
 class ShippingPolicy extends StatelessWidget {
-  const ShippingPolicy({super.key});
+  final String type;
+  const ShippingPolicy({super.key, required this.type});
 
   @override
   Widget build(BuildContext context) {

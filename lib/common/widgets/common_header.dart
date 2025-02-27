@@ -1,19 +1,20 @@
 import 'dart:convert';
 
-import 'package:ai_store/common/controller/bottom_navigation_controller.dart';
-import 'package:ai_store/common/controller/wish_cart_list_controller.dart';
-import 'package:ai_store/common/widgets/custom_common_title.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/config/routes/routes.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/constants/user_role.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/home/controller/search_controller.dart';
-import 'package:ai_store/screens/home/model/products_model.dart' as model;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/bottom_navigation_controller.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/controller/wish_cart_list_controller.dart';
+import 'package:invoshop/common/widgets/custom_common_title.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/constants/user_role.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/home/controller/search_controller.dart';
+import 'package:invoshop/screens/home/model/products_model.dart' as model;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CommonHeader extends StatefulWidget {
@@ -30,6 +31,7 @@ class _CommonHeaderState extends State<CommonHeader> {
       Get.put(SearchingController());
   final WishListAndCartListController wishListAndCartListController =
       Get.put(WishListAndCartListController());
+  final CurrencyController currencyController = Get.put(CurrencyController());
   Map<String, dynamic>? user;
 
   @override
@@ -73,17 +75,9 @@ class _CommonHeaderState extends State<CommonHeader> {
       child: InkWell(
         borderRadius: BorderRadius.circular(30.r),
         onTap: () => Scaffold.of(context).openDrawer(),
-        child: Row(
-          children: [
-            Image.asset(
-              "assets/logos/logo-splash.png",
-              width: MediaQuery.of(context).size.width * 0.07,
-            ),
-            Text(
-              "Invoshop",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
-            ),
-          ],
+        child: Image.asset(
+          "assets/logos/logo_bg.png",
+          width: MediaQuery.of(context).size.width * 0.3,
         ),
       ),
     );
@@ -97,7 +91,8 @@ class _CommonHeaderState extends State<CommonHeader> {
     return Row(
       children: [
         Visibility(
-          visible: user!["user_role"] == UserRole.customer,
+          visible: user!["user_role"] == UserRole.customer ||
+              user!["user_role"] == UserRole.vendor,
           child: Obx(
             () => _buildIconWithBadge(
               iconPath: 'assets/icons/heart-bold.svg',
@@ -107,7 +102,8 @@ class _CommonHeaderState extends State<CommonHeader> {
           ),
         ),
         Visibility(
-          visible: user!["user_role"] == UserRole.customer,
+          visible: user!["user_role"] == UserRole.customer ||
+              user!["user_role"] == UserRole.vendor,
           child: Obx(
             () => _buildIconWithBadge(
               iconPath: 'assets/icons/bag-icon.svg',
@@ -342,7 +338,7 @@ class _CommonHeaderState extends State<CommonHeader> {
         ),
         title: CustomTitleText(title: product.title!),
         subtitle: Text(
-          '\$${product.price}',
+          '${currencyController.currencySymbol}${product.price}',
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,

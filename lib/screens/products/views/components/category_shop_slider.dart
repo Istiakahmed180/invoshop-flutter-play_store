@@ -1,6 +1,6 @@
-import 'package:ai_store/common/controller/categories_controller.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/products/controller/products_controller.dart';
+import 'package:invoshop/common/controller/categories_controller.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/products/controller/products_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -1,4 +1,4 @@
-import 'package:ai_store/constants/app_colors.dart';
+import 'package:invoshop/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class DarkTheme {

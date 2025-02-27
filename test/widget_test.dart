@@ -1,4 +1,4 @@
-import 'package:ai_store/app.dart';
+import 'package:invoshop/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

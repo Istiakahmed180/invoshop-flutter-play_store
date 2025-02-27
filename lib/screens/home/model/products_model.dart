@@ -35,6 +35,7 @@ class ProductsData {
   int? quantity;
   String? introText;
   String? description;
+  List<String>? attributes;
   int? isFeatured;
   int? isExpired;
   int? isPromoSale;
@@ -44,6 +45,9 @@ class ProductsData {
   String? status;
   String? createdAt;
   String? updatedAt;
+  String? weight;
+  String? productReviewsAvgRating;
+  int? productReviewsCount;
   Image? image;
   List<Categories>? categories;
   Unit? unit;
@@ -72,6 +76,7 @@ class ProductsData {
     this.quantity,
     this.introText,
     this.description,
+    this.attributes,
     this.isFeatured,
     this.isExpired,
     this.isPromoSale,
@@ -81,6 +86,9 @@ class ProductsData {
     this.status,
     this.createdAt,
     this.updatedAt,
+    this.weight,
+    this.productReviewsAvgRating,
+    this.productReviewsCount,
     this.image,
     this.categories,
     this.unit,
@@ -110,6 +118,11 @@ class ProductsData {
     quantity = json['quantity'];
     introText = json['intro_text'];
     description = json['description'];
+    if (json['attributes'] != null) {
+      attributes = List<String>.from(json['attributes']);
+    } else {
+      attributes = [];
+    }
     isFeatured = json['is_featured'];
     isExpired = json['is_expired'];
     isPromoSale = json['is_promo_sale'];
@@ -119,6 +132,9 @@ class ProductsData {
     status = json['status'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    weight = json["weight"];
+    productReviewsAvgRating = json['product_reviews_avg_rating'];
+    productReviewsCount = json['product_reviews_count'];
     image = json['image'] != null ? Image.fromJson(json['image']) : null;
     if (json['categories'] != null) {
       categories = <Categories>[];
@@ -169,6 +185,7 @@ class ProductsData {
       'quantity': quantity,
       'intro_text': introText,
       'description': description,
+      "attributes": attributes,
       'is_featured': isFeatured,
       'is_expired': isExpired,
       'is_promo_sale': isPromoSale,
@@ -178,6 +195,9 @@ class ProductsData {
       'status': status,
       'created_at': createdAt,
       'updated_at': updatedAt,
+      'weight': weight,
+      "product_reviews_avg_rating": productReviewsAvgRating,
+      "product_reviews_count": productReviewsCount,
       'image': image?.toJson(),
       'categories': categories?.map((v) => v.toJson()).toList(),
       'unit': unit?.toJson(),

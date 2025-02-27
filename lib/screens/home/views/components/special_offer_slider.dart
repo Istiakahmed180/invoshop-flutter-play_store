@@ -1,8 +1,9 @@
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/home/controller/home_controller.dart';
-import 'package:ai_store/screens/home/views/components/special_offers.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/home/controller/home_controller.dart';
+import 'package:invoshop/screens/home/views/components/special_offers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class SpecialOfferSlider extends StatelessWidget {
@@ -13,10 +14,13 @@ class SpecialOfferSlider extends StatelessWidget {
     final HomeController homeController = Get.put(HomeController());
     final specialOffersList = homeController.specialOffersProductList;
     if (specialOffersList.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
-          'No special offers available',
-          style: TextStyle(fontSize: 16, color: AppColors.groceryRatingGray),
+          'No products available',
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: AppColors.groceryPrimary.withValues(alpha: 0.5),
+          ),
         ),
       );
     }

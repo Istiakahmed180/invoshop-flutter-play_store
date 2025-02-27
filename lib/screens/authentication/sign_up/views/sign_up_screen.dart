@@ -1,8 +1,8 @@
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/config/routes/routes.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/authentication/sign_up/controller/sign_up_controller.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/authentication/sign_up/controller/sign_up_controller.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

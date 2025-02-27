@@ -5,42 +5,52 @@ class ApiPath {
   static const String webViewUrl = 'https://inventual.app/login';
   static const String baseImageUrl = 'https://inventual.app/storage/';
 
-  static String dynamicBaseUrl({required String supplierKey}) =>
-      'https://$supplierKey.inventual.app/api/v1';
+  static String dynamicBaseUrl({required String domainName}) =>
+      'https://$domainName/api/v1';
 
-  static String dynamicWebViewUrl({required String supplierKey}) =>
-      'https://$supplierKey.inventual.app/login';
+  static String dynamicWebViewUrl({required String domainName}) =>
+      'https://$domainName/login';
 
-  static String dynamicBaseImageUrl({required String supplierKey}) =>
-      'https://$supplierKey.inventual.app/storage/$supplierKey/';
+  static String dynamicBaseImageUrl(
+          {required String domainName, required String domainKey}) =>
+      'https://$domainName/storage/$domainKey/';
 
-  static Future<String?> _getSupplierKey() async {
+  static Future<String?> _getDomainKey() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString("supplier_key");
+    return prefs.getString("domain_key");
+  }
+
+  static Future<String?> _getDomainName() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("domain_name");
   }
 
   static Future<String> getBaseUrl() async {
-    final String? supplierKey = await _getSupplierKey();
-    if (supplierKey == null || supplierKey.isEmpty) {
+    final String? domainName = await _getDomainName();
+    if (domainName == null || domainName.isEmpty) {
       return baseUrl;
     }
-    return dynamicBaseUrl(supplierKey: supplierKey);
+    return dynamicBaseUrl(domainName: domainName);
   }
 
   static Future<String> getWebViewUrl() async {
-    final String? supplierKey = await _getSupplierKey();
-    if (supplierKey == null || supplierKey.isEmpty) {
+    final String? domainName = await _getDomainName();
+    if (domainName == null || domainName.isEmpty) {
       return webViewUrl;
     }
-    return dynamicWebViewUrl(supplierKey: supplierKey);
+    return dynamicWebViewUrl(domainName: domainName);
   }
 
   static Future<String> getBaseImageUrl() async {
-    final String? supplierKey = await _getSupplierKey();
-    if (supplierKey == null || supplierKey.isEmpty) {
+    final String? domainName = await _getDomainName();
+    final String? domainKey = await _getDomainKey();
+    if (domainName == null || domainName.isEmpty) {
       return baseImageUrl;
     }
-    return dynamicBaseImageUrl(supplierKey: supplierKey);
+    if (domainKey == null || domainKey.isEmpty) {
+      return baseImageUrl;
+    }
+    return dynamicBaseImageUrl(domainName: domainName, domainKey: domainKey);
   }
 
   static Future<String> getImageUrl(String imagePath) async {
@@ -68,9 +78,9 @@ class ApiPath {
     return '$url/area/list?district_id=$districtID';
   }
 
-  static Future<String> getSupplierEndpoint({required String areaID}) async {
+  static Future<String> getSupplierEndpoint() async {
     final String url = await getBaseUrl();
-    return '$url/suppliers/stores?area_id=$areaID';
+    return '$url/suppliers/stores';
   }
 
   static Future<String> getPackageEndpoint() async {
@@ -164,9 +174,22 @@ class ApiPath {
     return '$url/sales/orders/products?status=$statusType';
   }
 
-  static Future<String> getMyOrderEndpoint({required String userID}) async {
+  static Future<String> getMyOrderEndpoint(
+      {required String userID, required String role}) async {
     final String url = await getBaseUrl();
-    return '$url/sales/my-orders/products?userId=$userID';
+    return '$url/sales/my-orders/products?userId=$userID&role=$role';
+  }
+
+  static Future<String> getVendorOrderEndpoint(
+      {required String userID, required String role}) async {
+    final String url = await getBaseUrl();
+    return '$url/sales/my-orders/products?userId=$userID&role=$role';
+  }
+
+  static Future<String> getCustomerOrderEndpoint(
+      {required String userID, required String role}) async {
+    final String url = await getBaseUrl();
+    return '$url/sales/my-orders/products?userId=$userID&role=$role';
   }
 
   static Future<String> postAcceptOrderEndpoint() async {
@@ -184,9 +207,10 @@ class ApiPath {
     return '$url/products/overview';
   }
 
-  static Future<String> getProduceReviewsEndpoint() async {
+  static Future<String> getProduceReviewsEndpoint(
+      {required String userId}) async {
     final String url = await getBaseUrl();
-    return '$url/products/reviews';
+    return '$url/products/reviews/user/$userId';
   }
 
   static Future<String> getAllBanksEndpoint() async {
@@ -216,10 +240,16 @@ class ApiPath {
     return '$url?applogin=true&uid=$userId';
   }
 
-  static Future<String> getOrderReturnsEndpoint(
+  static Future<String> getVendorOrderReturnsEndpoint(
       {required String supplierId}) async {
     final String url = await getBaseUrl();
     return '$url/suppliers/refund-products?supplierId=$supplierId';
+  }
+
+  static Future<String> getCustomerOrderReturnsEndpoint(
+      {required String customerId}) async {
+    final String url = await getBaseUrl();
+    return '$url/suppliers/refund-products?customerId=$customerId';
   }
 
   static Future<String> deleteBankAccountEndpoint(
@@ -369,5 +399,307 @@ class ApiPath {
   static Future<String> getCouponsEndpoint() async {
     final String url = await getBaseUrl();
     return '$url/coupon/list';
+  }
+
+  static Future<String> getCategoriesByTypeEndpoint(
+      {required String categoryType}) async {
+    final String url = await getBaseUrl();
+    return '$url/category/list?type=$categoryType';
+  }
+
+  static Future<String> postCustomerCreateEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/customers/save';
+  }
+
+  static Future<String> postCustomerEditEndpoint(
+      {required String customerId}) async {
+    final String url = await getBaseUrl();
+    return '$url/customers/update/$customerId';
+  }
+
+  static Future<String> getSuppliersEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/suppliers/list';
+  }
+
+  static Future<String> deleteSupplierEndpoint(
+      {required String supplierId}) async {
+    final String url = await getBaseUrl();
+    return '$url/suppliers/delete/$supplierId';
+  }
+
+  static Future<String> getCompaniesEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/company/list';
+  }
+
+  static Future<String> postSupplierCreateEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/suppliers/save';
+  }
+
+  static Future<String> postSupplierUpdateEndpoint(
+      {required String supplierId}) async {
+    final String url = await getBaseUrl();
+    return '$url/suppliers/update/$supplierId';
+  }
+
+  static Future<String> deleteBillerEndpoint({required String billerId}) async {
+    final String url = await getBaseUrl();
+    return '$url/billers/delete/$billerId';
+  }
+
+  static Future<String> postBillerCreateEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/billers/save';
+  }
+
+  static Future<String> postBillerUpdateEndpoint(
+      {required String billerId}) async {
+    final String url = await getBaseUrl();
+    return '$url/billers/update/$billerId';
+  }
+
+  static Future<String> postWarehouseEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/warehouses/save';
+  }
+
+  static Future<String> deleteWarehouseEndpoint(
+      {required String warehouseId}) async {
+    final String url = await getBaseUrl();
+    return '$url/warehouses/delete/$warehouseId';
+  }
+
+  static Future<String> postUpdateWarehouseEndpoint(
+      {required String warehouseId}) async {
+    final String url = await getBaseUrl();
+    return '$url/warehouses/update/$warehouseId';
+  }
+
+  static Future<String> postCreateCategoryEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/category/save';
+  }
+
+  static Future<String> getSalesReportEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/report/sale';
+  }
+
+  static Future<String> getPurchaseReportEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/report/purchase';
+  }
+
+  static Future<String> getPaymentReportEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/report/payment';
+  }
+
+  static Future<String> getProductReportEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/report/product';
+  }
+
+  static Future<String> getStockReportEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/report/stock/list';
+  }
+
+  static Future<String> getExpenseReportEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/report/expense';
+  }
+
+  static Future<String> getUserReportEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/report/user';
+  }
+
+  static Future<String> getCustomerReportEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/report/customer';
+  }
+
+  static Future<String> getWarehouseReportEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/report/warehouse';
+  }
+
+  static Future<String> getSupplierReportEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/report/supplier';
+  }
+
+  static Future<String> getDiscountReportEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/report/discount';
+  }
+
+  static Future<String> getTaxReportEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/report/tax';
+  }
+
+  static Future<String> getSalesReturnEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/sales/return/list';
+  }
+
+  static Future<String> deleteSalesReturnEndpoint(
+      {required String saleId}) async {
+    final String url = await getBaseUrl();
+    return '$url/sales/return/delete/$saleId';
+  }
+
+  static Future<String> getPurchaseEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/purchases/list';
+  }
+
+  static Future<String> getPurchaseReturnEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/purchases/return/list';
+  }
+
+  static Future<String> deletePurchaseReturnEndpoint(
+      {required String purchaseId}) async {
+    final String url = await getBaseUrl();
+    return '$url/purchases/return/delete/$purchaseId';
+  }
+
+  static Future<String> postSaleCreateEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/sales/save';
+  }
+
+  static Future<String> postPurchaseCreateEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/purchases/save';
+  }
+
+  static Future<String> postReturnSaleCreateEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/sales/return/save';
+  }
+
+  static Future<String> postReturnPurchaseCreateEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/purchases/return/save';
+  }
+
+  static Future<String> getUnitsEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/units/list';
+  }
+
+  static Future<String> postCreateUnitEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/units/save';
+  }
+
+  static Future<String> deleteUnitEndpoint({required String unitId}) async {
+    final String url = await getBaseUrl();
+    return '$url/units/delete/$unitId';
+  }
+
+  static Future<String> postUpdateUnitEndpoint({required String unitId}) async {
+    final String url = await getBaseUrl();
+    return '$url/units/update/$unitId';
+  }
+
+  static Future<String> postCreateBrandEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/brands/save';
+  }
+
+  static Future<String> deleteBrandEndpoint({required String brandId}) async {
+    final String url = await getBaseUrl();
+    return '$url/brands/delete/$brandId';
+  }
+
+  static Future<String> postBrandUpdateEndpoint(
+      {required String brandId}) async {
+    final String url = await getBaseUrl();
+    return '$url/brands/update/$brandId';
+  }
+
+  static Future<String> deleteCategoryEndpoint(
+      {required String categoryId}) async {
+    final String url = await getBaseUrl();
+    return '$url/category/delete/$categoryId';
+  }
+
+  static Future<String> postUpdateCategoryEndpoint(
+      {required String categoryId}) async {
+    final String url = await getBaseUrl();
+    return '$url/category/update/$categoryId';
+  }
+
+  static Future<String> postCreateProductEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/products/save';
+  }
+
+  static Future<String> getColorVariantsEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/variants/list?type=Color';
+  }
+
+  static Future<String> getSizeVariantsEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/variants/list?type=Size';
+  }
+
+  static Future<String> getProductTypesEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/types/list';
+  }
+
+  static Future<String> getTaxesEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/taxes/list';
+  }
+
+  static Future<String> getSettingsEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/settings/all';
+  }
+
+  static Future<String> postProductReviewEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/products/reviews/save';
+  }
+
+  static Future<String> postProductRefundEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/sales/my-orders/request-refund';
+  }
+
+  static Future<String> getAboutUsContentEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/pages/About Us';
+  }
+
+  static Future<String> postContactEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/pages/contact';
+  }
+
+  static Future<String> getRefundPolicyEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/pages/Refund Policy';
+  }
+
+  static Future<String> getPrivacyPolicyEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/pages/Privacy Policy';
+  }
+
+  static Future<String> getTermsAndConditionEndpoint() async {
+    final String url = await getBaseUrl();
+    return '$url/pages/Terms and Condition';
   }
 }

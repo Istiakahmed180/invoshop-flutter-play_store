@@ -1,11 +1,13 @@
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/admin%20_and_vendor_products/controller/admin_and_vendor_products_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/admin%20_and_vendor_products/controller/admin_and_vendor_products_controller.dart';
 
 class AdminAndVendorProductsScreen extends StatefulWidget {
   const AdminAndVendorProductsScreen({super.key});
@@ -19,7 +21,9 @@ class _AdminAndVendorProductsScreenState
     extends State<AdminAndVendorProductsScreen> {
   final AdminAndVendorProductsController vendorProductsController =
       Get.put(AdminAndVendorProductsController());
+  final CurrencyController controller = Get.put(CurrencyController());
   late Map<int, Future<String>> imageFutures;
+  final GlobalKey _fabKey = GlobalKey();
 
   @override
   void initState() {
@@ -35,40 +39,133 @@ class _AdminAndVendorProductsScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(appBarName: "Products"),
-      body: Obx(() {
-        if (vendorProductsController.isLoading.value) {
-          return const CustomLoading(withOpacity: 0.0);
-        }
+        appBar: const CustomAppBar(appBarName: "Products"),
+        body: Obx(() {
+          if (vendorProductsController.isLoading.value) {
+            return const CustomLoading(withOpacity: 0.0);
+          }
 
-        if (vendorProductsController.vendorProductList.isEmpty) {
-          return _buildNoOrdersMessage();
-        }
+          if (vendorProductsController.vendorProductList.isEmpty) {
+            return _buildNoOrdersMessage();
+          }
 
-        return RefreshIndicator(
-          backgroundColor: AppColors.groceryBody,
-          color: AppColors.groceryPrimary,
-          onRefresh: vendorProductsController.getAdminAndVendorProducts,
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  SizedBox(height: 10.h),
-                  _buildDataTable(),
-                  SizedBox(height: 16.h),
-                ],
-              ),
-              Obx(
-                () => Visibility(
-                  visible: vendorProductsController.isLoading.value,
-                  child: const CustomLoading(),
+          return RefreshIndicator(
+            backgroundColor: AppColors.groceryBody,
+            color: AppColors.groceryPrimary,
+            onRefresh: vendorProductsController.getAdminAndVendorProducts,
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    SizedBox(height: 10.h),
+                    _buildDataTable(),
+                    SizedBox(height: 16.h),
+                  ],
                 ),
-              )
-            ],
+                Obx(
+                  () => Visibility(
+                    visible: vendorProductsController.isLoading.value,
+                    child: const CustomLoading(),
+                  ),
+                )
+              ],
+            ),
+          );
+        }),
+        floatingActionButton: FloatingActionButton(
+          key: _fabKey,
+          backgroundColor: AppColors.groceryPrimary,
+          onPressed: () {
+            final RenderBox renderBox =
+                _fabKey.currentContext!.findRenderObject() as RenderBox;
+            final buttonPosition = renderBox.localToGlobal(Offset.zero);
+            final buttonSize = renderBox.size;
+            showMenu(
+              context: context,
+              position: RelativeRect.fromLTRB(
+                buttonPosition.dx,
+                buttonPosition.dy - 120,
+                buttonPosition.dx + buttonSize.width,
+                buttonPosition.dy,
+              ),
+              items: [
+                PopupMenuItem<String>(
+                  onTap: () {
+                    Get.toNamed(BaseRoute.addProduct);
+                  },
+                  value: 'Add Product',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.add_box,
+                        color: AppColors.groceryPrimary,
+                        size: 20,
+                      ),
+                      SizedBox(width: 5),
+                      Text('Add Product'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<String>(
+                  onTap: () {
+                    Get.toNamed(BaseRoute.categoryManagement);
+                  },
+                  value: 'Category',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.category,
+                        color: AppColors.groceryPrimary,
+                        size: 20,
+                      ),
+                      SizedBox(width: 5),
+                      Text('Category'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<String>(
+                  onTap: () {
+                    Get.toNamed(BaseRoute.brandManagement);
+                  },
+                  value: 'Brand',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.branding_watermark,
+                        color: AppColors.groceryPrimary,
+                        size: 20,
+                      ),
+                      SizedBox(width: 5),
+                      Text('Brand'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<String>(
+                  onTap: () {
+                    Get.toNamed(BaseRoute.unitManagement);
+                  },
+                  value: 'Unit Management',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.settings,
+                        color: AppColors.groceryPrimary,
+                        size: 20,
+                      ),
+                      SizedBox(width: 5),
+                      Text('Unit Management'),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+          child: Icon(
+            Icons.add,
+            size: 30.w,
+            color: AppColors.groceryWhite,
           ),
-        );
-      }),
-    );
+        ));
   }
 
   Widget _buildNoOrdersMessage() {
@@ -209,7 +306,8 @@ class _AdminAndVendorProductsScreenState
                 ? product.categories![0].title ?? "N/A"
                 : "N/A",
           ),
-          _buildDataCell(product.unit!.name ?? "N/A"),
+          _buildDataCell(
+              product.unit != null ? product.unit!.name ?? "N/A" : "N/A"),
           _buildDataCell(
             (product.colorVariant != null && product.colorVariant!.isNotEmpty)
                 ? product.colorVariant![0].name ?? "N/A"
@@ -222,7 +320,7 @@ class _AdminAndVendorProductsScreenState
           ),
           DataCell(Center(
             child: Text(
-              '\$${product.price ?? '0.00'}',
+              '${controller.currencySymbol}${product.price ?? '0.00'}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 12.sp,

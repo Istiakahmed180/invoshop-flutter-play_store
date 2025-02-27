@@ -1,6 +1,6 @@
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/config/routes/routes.dart';
-import 'package:ai_store/constants/app_colors.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -35,7 +35,7 @@ class PaymentConfirmation extends StatelessWidget {
               CustomElevatedButton(
                 buttonName: "Go Back",
                 onPressed: () {
-                  Get.offAllNamed(BaseRoute.findSupplier);
+                  Get.offAllNamed(BaseRoute.findDomain);
                 },
               ),
             ],

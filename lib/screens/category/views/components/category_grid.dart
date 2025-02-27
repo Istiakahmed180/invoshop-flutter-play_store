@@ -1,5 +1,5 @@
-import 'package:ai_store/screens/category/models/category_data.dart';
-import 'package:ai_store/screens/category/views/components/category_card.dart';
+import 'package:invoshop/screens/category/models/category_data.dart';
+import 'package:invoshop/screens/category/views/components/category_card.dart';
 import 'package:flutter/material.dart';
 
 class CategoryGrid extends StatelessWidget {

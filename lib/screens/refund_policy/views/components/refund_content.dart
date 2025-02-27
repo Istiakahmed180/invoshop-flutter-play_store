@@ -1,5 +1,5 @@
-import 'package:ai_store/common/widgets/section_title.dart';
-import 'package:ai_store/constants/app_colors.dart';
+import 'package:invoshop/common/widgets/section_title.dart';
+import 'package:invoshop/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

@@ -1,14 +1,14 @@
-import 'package:ai_store/common/controller/bottom_navigation_controller.dart';
-import 'package:ai_store/common/controller/categories_controller.dart';
-import 'package:ai_store/common/widgets/common_header.dart';
-import 'package:ai_store/common/widgets/custom_button_no_border.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/common/widgets/section_title.dart';
-import 'package:ai_store/screens/home/controller/home_controller.dart';
-import 'package:ai_store/screens/home/views/components/category_slider.dart';
-import 'package:ai_store/screens/home/views/components/home_banner.dart';
-import 'package:ai_store/screens/home/views/components/product_slider.dart';
-import 'package:ai_store/screens/home/views/components/special_offer_slider.dart';
+import 'package:invoshop/common/controller/bottom_navigation_controller.dart';
+import 'package:invoshop/common/controller/categories_controller.dart';
+import 'package:invoshop/common/widgets/common_header.dart';
+import 'package:invoshop/common/widgets/custom_button_no_border.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/common/widgets/section_title.dart';
+import 'package:invoshop/screens/home/controller/home_controller.dart';
+import 'package:invoshop/screens/home/views/components/category_slider.dart';
+import 'package:invoshop/screens/home/views/components/home_banner.dart';
+import 'package:invoshop/screens/home/views/components/product_slider.dart';
+import 'package:invoshop/screens/home/views/components/special_offer_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -53,57 +53,85 @@ class _HomeContainerState extends State<HomeContainer> {
                             categoriesController: categoriesController,
                           ),
                         ),
-                        buildSection(
-                          title: "All Fresh Products Daily",
-                          onTap: () =>
-                              bottomNavigationController.onItemTapped(2),
-                          child: const ProductSlider(
-                            whichProductEndpoint: "Fresh Products",
+                        Visibility(
+                          visible: homeController.freshProductList.isNotEmpty,
+                          child: buildSection(
+                            title: "All Fresh Products Daily",
+                            onTap: () =>
+                                bottomNavigationController.onItemTapped(2),
+                            child: const ProductSlider(
+                              whichProductEndpoint: "Fresh Products",
+                            ),
                           ),
                         ),
-                        buildSection(
-                          title: "Special Offers of the Week!",
-                          onTap: () =>
-                              bottomNavigationController.onItemTapped(1),
-                          child: const SpecialOfferSlider(),
-                        ),
-                        buildSection(
-                          title: "New Arrivals",
-                          onTap: () =>
-                              bottomNavigationController.onItemTapped(2),
-                          child: const ProductSlider(
-                            whichProductEndpoint: "New Arrivals Products",
+                        Visibility(
+                          visible: homeController
+                              .specialOffersProductList.isNotEmpty,
+                          child: buildSection(
+                            title: "Special Offers of the Week!",
+                            onTap: () =>
+                                bottomNavigationController.onItemTapped(1),
+                            child: const SpecialOfferSlider(),
                           ),
                         ),
-                        buildSection(
-                          title: "Best Sellers",
-                          onTap: () =>
-                              bottomNavigationController.onItemTapped(2),
-                          child: const ProductSlider(
-                            whichProductEndpoint: "Best Sellers Products",
+                        Visibility(
+                          visible:
+                              homeController.newArrivalsProductList.isNotEmpty,
+                          child: buildSection(
+                            title: "New Arrivals",
+                            onTap: () =>
+                                bottomNavigationController.onItemTapped(2),
+                            child: const ProductSlider(
+                              whichProductEndpoint: "New Arrivals Products",
+                            ),
                           ),
                         ),
-                        buildSection(
-                          title: "Trending Products",
-                          onTap: () =>
-                              bottomNavigationController.onItemTapped(2),
-                          child: const ProductSlider(
-                            whichProductEndpoint: "Trending Products",
+                        Visibility(
+                          visible:
+                              homeController.bestSellersProductList.isNotEmpty,
+                          child: buildSection(
+                            title: "Best Sellers",
+                            onTap: () =>
+                                bottomNavigationController.onItemTapped(2),
+                            child: const ProductSlider(
+                              whichProductEndpoint: "Best Sellers Products",
+                            ),
                           ),
                         ),
-                        buildSection(
-                          title: "Featured Products",
-                          onTap: () =>
-                              bottomNavigationController.onItemTapped(2),
-                          child: const ProductSlider(
-                              whichProductEndpoint: "Featured Products"),
+                        Visibility(
+                          visible:
+                              homeController.trendingProductList.isNotEmpty,
+                          child: buildSection(
+                            title: "Trending Products",
+                            onTap: () =>
+                                bottomNavigationController.onItemTapped(2),
+                            child: const ProductSlider(
+                              whichProductEndpoint: "Trending Products",
+                            ),
+                          ),
                         ),
-                        buildSection(
-                          title: "Exclusive App-Only Offers",
-                          onTap: () =>
-                              bottomNavigationController.onItemTapped(2),
-                          child: const ProductSlider(
-                            whichProductEndpoint: "Exclusive App Only Products",
+                        Visibility(
+                          visible:
+                              homeController.featuredProductList.isNotEmpty,
+                          child: buildSection(
+                            title: "Featured Products",
+                            onTap: () =>
+                                bottomNavigationController.onItemTapped(2),
+                            child: const ProductSlider(
+                                whichProductEndpoint: "Featured Products"),
+                          ),
+                        ),
+                        Visibility(
+                          visible: homeController
+                              .exclusiveAppOnlyProductList.isNotEmpty,
+                          child: buildSection(
+                            title: "Exclusive App-Only Offers",
+                            onTap: () =>
+                                bottomNavigationController.onItemTapped(2),
+                            child: const ProductSlider(
+                              whichProductEndpoint:
+                                  "Exclusive App Only Products",
+                            ),
                           ),
                         ),
                       ],

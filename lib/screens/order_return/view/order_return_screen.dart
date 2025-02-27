@@ -1,12 +1,13 @@
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/screens/order_return/controller/order_return_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/screens/order_return/controller/order_return_controller.dart';
 
 class OrderReturnScreen extends StatefulWidget {
   const OrderReturnScreen({super.key});
@@ -22,7 +23,7 @@ class _OrderReturnScreenState extends State<OrderReturnScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: const CustomAppBar(appBarName: "Order Return Request"),
+        appBar: const CustomAppBar(appBarName: "Order Return"),
         body: Obx(
           () => orderReturnController.isLoading.value
               ? const CustomLoading(
@@ -99,9 +100,12 @@ class _OrderReturnScreenState extends State<OrderReturnScreen> {
       _buildTableHeader("SL"),
       _buildTableHeader("Image"),
       _buildTableHeader("Product Name"),
-      _buildTableHeader("Status"),
       _buildTableHeader("Date"),
+      _buildTableHeader("Tax Amount"),
+      _buildTableHeader("Discount"),
       _buildTableHeader("Refund Amount"),
+      _buildTableHeader("Amount"),
+      _buildTableHeader("Status"),
     ];
   }
 
@@ -127,36 +131,46 @@ class _OrderReturnScreenState extends State<OrderReturnScreen> {
       return DataRow(
         cells: [
           DataCell(Center(child: Text('${index + 1}'))),
-          DataCell(FutureBuilder(
-            future: ApiPath.getImageUrl(review.product!.image!.path!),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox();
-              }
-              if (snapshot.hasError) {
-                return const Icon(
-                  Icons.broken_image,
-                  size: 50,
-                  color: AppColors.groceryBorder,
-                );
-              }
+          DataCell(CircleAvatar(
+            radius: 26,
+            backgroundColor: AppColors.groceryBorder,
+            child: FutureBuilder(
+              future: ApiPath.getImageUrl(review.product!.image!.path!),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox();
+                }
+                if (snapshot.hasError) {
+                  return const Icon(
+                    Icons.broken_image,
+                    size: 50,
+                    color: AppColors.groceryBorder,
+                  );
+                }
 
-              return Center(
-                child: CachedNetworkImage(
-                  imageUrl: snapshot.data!,
-                  placeholder: (context, url) =>
-                      Image.asset("assets/gif/loading.gif"),
-                  errorWidget: (context, url, error) =>
-                      const Icon(Icons.broken_image),
-                  width: 60,
-                ),
-              );
-            },
+                return Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: snapshot.data!,
+                      placeholder: (context, url) =>
+                          Image.asset("assets/gif/loading.gif"),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.broken_image),
+                    ),
+                  ),
+                );
+              },
+            ),
           )),
           _buildDataCell(review.product?.title ?? "N/A"),
-          _buildDataCell(review.status ?? "N/A"),
-          _buildDataCell("N/A"),
+          _buildDataCell(DateFormat("dd-MM-yyyy")
+              .format(DateTime.parse(review.createdAt.toString()))),
+          _buildDataCell(review.taxAmount ?? "0.00"),
+          _buildDataCell(review.discount ?? "0.00"),
           _buildDataCell(review.refundAmount ?? "0.00"),
+          _buildDataCell(review.amount ?? "0.00"),
+          _buildDataCell(review.refund!.refundStatus ?? "N/A"),
         ],
       );
     }).toList();

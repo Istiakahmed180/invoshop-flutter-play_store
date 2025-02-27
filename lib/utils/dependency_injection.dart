@@ -1,4 +1,4 @@
-import 'package:ai_store/network/internet_connectivity_controller.dart';
+import 'package:invoshop/network/internet_connectivity_controller.dart';
 import 'package:get/get.dart';
 
 class DependencyInjection {

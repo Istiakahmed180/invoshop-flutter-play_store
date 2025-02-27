@@ -1,10 +1,11 @@
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/profile/controller/transaction_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/profile/controller/transaction_controller.dart';
 
 class TransactionsScreen extends StatefulWidget {
   const TransactionsScreen({super.key});
@@ -16,6 +17,7 @@ class TransactionsScreen extends StatefulWidget {
 class _TransactionsScreenState extends State<TransactionsScreen> {
   final TransactionController transactionController =
       Get.put(TransactionController());
+  final CurrencyController currencyController = Get.put(CurrencyController());
 
   String getStatusColor(String? status) {
     switch (status?.toLowerCase()) {
@@ -189,7 +191,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                                               ),
                                               SizedBox(height: 4.h),
                                               Text(
-                                                "Total: \$${transaction.totalAmount ?? "0.00"}",
+                                                "Total: ${currencyController.currencySymbol}${transaction.totalAmount ?? "0.00"}",
                                                 style: TextStyle(
                                                   fontSize: 12.sp,
                                                   color:
@@ -310,9 +312,12 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                            order.product!
-                                                                    .title ??
-                                                                "Unknown Product",
+                                                            order.product !=
+                                                                    null
+                                                                ? order.product!
+                                                                        .title ??
+                                                                    "Unknown Product"
+                                                                : "Unknown Product",
                                                             style: TextStyle(
                                                               fontSize: 12.sp,
                                                               fontWeight:
@@ -334,7 +339,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      "\$${order.amount ?? "0.00"}",
+                                                      "${currencyController.currencySymbol}${order.amount ?? "0.00"}",
                                                       style: TextStyle(
                                                         fontSize: 14.sp,
                                                         fontWeight:

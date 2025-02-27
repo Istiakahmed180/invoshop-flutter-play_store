@@ -1,6 +1,6 @@
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/cart/views/sub_sections/cart_list.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/cart/views/sub_sections/cart_list.dart';
 import 'package:flutter/material.dart';
 
 class CartScreen extends StatefulWidget {

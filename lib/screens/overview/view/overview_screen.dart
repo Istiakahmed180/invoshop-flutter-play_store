@@ -1,12 +1,13 @@
 import 'dart:convert';
 
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/overview/controller/overview_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/overview/controller/overview_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OverviewScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class OverviewScreen extends StatefulWidget {
 
 class _OverviewScreenState extends State<OverviewScreen> {
   final OverviewController overviewController = Get.put(OverviewController());
+  final CurrencyController currencyController = Get.put(CurrencyController());
   Map<String, dynamic>? user;
 
   @override
@@ -91,21 +93,21 @@ class _OverviewScreenState extends State<OverviewScreen> {
       _buildCard(
         title: 'Total Earnings',
         value:
-            '\$${overviewController.overviewModel.data?.totalEarnings ?? 0.00}',
+            '${currencyController.currencySymbol}${overviewController.overviewModel.data?.totalEarnings ?? 0.00}',
         icon: Icons.attach_money_rounded,
         color: Colors.green,
       ),
       _buildCard(
         title: 'Current Earnings',
         value:
-            "\$${overviewController.overviewModel.data?.currentEarnings ?? "0.00"}",
+            "${currencyController.currencySymbol}${overviewController.overviewModel.data?.currentEarnings ?? "0.00"}",
         icon: Icons.trending_up_rounded,
         color: Colors.blue,
       ),
       _buildCard(
         title: 'Pending Earnings',
         value:
-            '\$${overviewController.overviewModel.data?.pendingEarnings ?? "0.00"}',
+            '${currencyController.currencySymbol}${overviewController.overviewModel.data?.pendingEarnings ?? "0.00"}',
         icon: Icons.pending_actions_rounded,
         color: Colors.orange,
       ),

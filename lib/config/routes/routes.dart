@@ -7,7 +7,7 @@ class BaseRoute {
   static const String cart = "/cart";
   static const String myWishlist = "/myWishlist";
   static const String orderSuccess = "/orderSuccess";
-  static const String findSupplier = "/find_supplier";
+  static const String findDomain = "/find_domain";
   static const String becomeASeller = "/become_a_seller";
   static const String home = "/home";
   static const String brand = "/brand";
@@ -19,14 +19,13 @@ class BaseRoute {
   static const String signUp = "/signUp";
   static const String signIn = "/signIn";
   static const String forgotPass = "/forgot";
-  static const String otp = "/otp";
   static const String changePassword = "/changePassword";
   static const String newOrder = "/new_order";
   static const String orders = "/orders";
   static const String overView = "/over_view";
-  static const String vendorReviews = "/vendor_reviews";
+  static const String userReviews = "/user_reviews";
   static const String orderReturn = "/order_return";
-  static const String payment = "/payment";
+  static const String bankAccount = "/bank_account";
   static const String adminAndVendorProducts = "/admin_and_vendor_products";
   static const String profile = "/profile";
   static const String orderHistory = "/orderHistory";
@@ -40,4 +39,14 @@ class BaseRoute {
   static const String pos = "/pos";
   static const String userManagement = "/user_management";
   static const String customer = "/customer";
+  static const String supplier = "/supplier_screen";
+  static const String billers = "/billers_screen";
+  static const String warehouse = "/warehouse_screen";
+  static const String reports = "/reports_screen";
+  static const String sale = "/sale_screen";
+  static const String unitManagement = "/unit_management_screen";
+  static const String brandManagement = "/brand_management_screen";
+  static const String categoryManagement = "/category_management_screen";
+  static const String addProduct = "/addProduct_screen";
+  static const String customerOrders = "/customer_order_screen";
 }

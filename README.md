@@ -1,4 +1,4 @@
-# ai_store
+# invoshop
 
 Flutter Boiler Plate
 

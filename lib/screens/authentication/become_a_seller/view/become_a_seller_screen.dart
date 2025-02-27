@@ -1,9 +1,9 @@
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/custom_label_text.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/authentication/become_a_seller/controller/become_a_seller_controller.dart';
-import 'package:ai_store/screens/authentication/become_a_seller/view/sub_sections/become_a_seller_payment_method.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/custom_label_text.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/authentication/become_a_seller/controller/become_a_seller_controller.dart';
+import 'package:invoshop/screens/authentication/become_a_seller/view/sub_sections/become_a_seller_payment_method.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

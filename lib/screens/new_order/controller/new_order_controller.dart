@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/network/response/status.dart';
-import 'package:ai_store/network/services/network_services.dart';
-import 'package:ai_store/screens/new_order/model/new_order_model.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/network/response/status.dart';
+import 'package:invoshop/network/services/network_services.dart';
+import 'package:invoshop/screens/new_order/model/new_order_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -1,11 +1,12 @@
-import 'package:ai_store/common/controller/wish_cart_list_controller.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/currency_controller.dart';
+import 'package:invoshop/common/controller/wish_cart_list_controller.dart';
+import 'package:invoshop/common/widgets/custom_elevated_button.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
 
 class WishlistCartList extends StatefulWidget {
   const WishlistCartList({super.key});
@@ -17,6 +18,7 @@ class WishlistCartList extends StatefulWidget {
 class _WishlistCartListState extends State<WishlistCartList> {
   final WishListAndCartListController wishListAndCartListController =
       Get.put(WishListAndCartListController());
+  final CurrencyController currencyController = Get.put(CurrencyController());
 
   @override
   void initState() {
@@ -126,7 +128,7 @@ class _WishlistCartListState extends State<WishlistCartList> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '\$${product.price}',
+                                    '${currencyController.currencySymbol}${product.price}',
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       color: AppColors.groceryPrimary,

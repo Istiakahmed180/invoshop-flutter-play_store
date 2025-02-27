@@ -1,13 +1,12 @@
-import 'package:ai_store/common/controller/vendor_reviews_controller.dart';
-import 'package:ai_store/common/custom_appbar/custom_appbar.dart';
-import 'package:ai_store/common/widgets/custom_common_title.dart';
-import 'package:ai_store/common/widgets/custom_elevated_button.dart';
-import 'package:ai_store/common/widgets/loading/custom_loading.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/screens/profile/views/sub_sections/reviews/model/my_review_model.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:invoshop/common/controller/reviews_controller.dart';
+import 'package:invoshop/common/custom_appbar/custom_appbar.dart';
+import 'package:invoshop/common/widgets/custom_common_title.dart';
+import 'package:invoshop/common/widgets/loading/custom_loading.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/screens/reviews/model/review_model.dart';
 
 class ReviewsScreen extends StatefulWidget {
   const ReviewsScreen({super.key});
@@ -17,28 +16,7 @@ class ReviewsScreen extends StatefulWidget {
 }
 
 class _ReviewsScreenState extends State<ReviewsScreen> {
-  final VendorReviewsController reviewsController =
-      Get.put(VendorReviewsController());
-  bool _showAllReviews = false;
-  final List<int> _hiddenReviews = [];
-  int? _editingIndex;
-  String _editingComment = '';
-  double _editingRating = 0.0;
-  final TextEditingController _commentController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _commentController.addListener(() {
-      _editingComment = _commentController.text;
-    });
-  }
-
-  @override
-  void dispose() {
-    _commentController.dispose();
-    super.dispose();
-  }
+  final ReviewsController reviewsController = Get.put(ReviewsController());
 
   @override
   Widget build(BuildContext context) {
@@ -66,41 +44,18 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   }
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          'My Reviews',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: AppColors.groceryTitle,
-          ),
-        ),
-        TextButton(
-          onPressed: () {
-            setState(() {
-              _showAllReviews = !_showAllReviews;
-            });
-          },
-          child: Text(
-            _showAllReviews ? 'Show Less' : 'See All',
-            style: const TextStyle(
-              color: AppColors.groceryPrimary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
+    return const Text(
+      'My Reviews',
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+        color: AppColors.groceryTitle,
+      ),
     );
   }
 
   Widget _buildReviewList() {
-    final filteredReviews = myReviews.asMap().entries.where((entry) {
-      return !_hiddenReviews.contains(entry.key);
-    }).toList();
-
-    if (filteredReviews.isEmpty) {
+    if (reviewsController.reviewsList.isEmpty) {
       return const Center(
         child: Text(
           "No Reviews Found",
@@ -113,17 +68,15 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
     }
 
     return ListView.builder(
-      itemCount: _showAllReviews ? filteredReviews.length : 3,
+      itemCount: reviewsController.reviewsList.length,
       itemBuilder: (context, index) {
-        if (index >= filteredReviews.length) return const SizedBox.shrink();
-
-        final reviewEntry = filteredReviews[index];
-        return _buildReviewItem(reviewEntry.value, reviewEntry.key);
+        final ReviewData review = reviewsController.reviewsList[index];
+        return _buildReviewItem(review: review);
       },
     );
   }
 
-  Widget _buildReviewItem(Map<String, dynamic> review, int originalIndex) {
+  Widget _buildReviewItem({required ReviewData review}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
@@ -143,42 +96,44 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildReviewHeader(review, originalIndex),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: _buildReviewHeader(review: review)),
+              _buildRatingStars(review: review),
+            ],
+          ),
           const SizedBox(height: 8),
-          _buildRatingStars(review["rating"]),
-          const SizedBox(height: 8),
-          if (_editingIndex == originalIndex)
-            _buildEditReviewForm(review)
-          else
-            Text(
-              review["comment"],
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.grocerySubTitle,
-              ),
+          Text(
+            review.content ?? "N/A",
+            style: const TextStyle(
+              fontSize: 14,
+              color: AppColors.grocerySubTitle,
             ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildReviewHeader(Map<String, dynamic> review, int index) {
+  Widget _buildReviewHeader({required ReviewData review}) {
     return Row(
       children: [
         CircleAvatar(
           backgroundColor: AppColors.groceryBodyTwo,
           radius: 25,
-          backgroundImage: AssetImage(review["imageUrl"]),
+          backgroundImage: AssetImage("assets/images/products/borccoli.png"),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomTitleText(title: review["productName"]),
+              CustomTitleText(title: review.product!.title ?? "N/A"),
               const SizedBox(height: 2),
               Text(
-                review["reviewTime"],
+                DateFormat("dd-MM-yyyy")
+                    .format(DateTime.parse(review.createdAt.toString())),
                 style: const TextStyle(
                   fontSize: 12,
                   color: AppColors.grocerySubTitle,
@@ -187,56 +142,22 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
             ],
           ),
         ),
-        InkWell(
-          onTap: () {
-            setState(() {
-              _editingIndex = index;
-              _editingComment = review["comment"];
-              _editingRating = review["rating"];
-              _commentController.text = _editingComment;
-            });
-          },
-          child: CircleAvatar(
-            radius: 15,
-            backgroundColor: AppColors.groceryBodyTwo,
-            child: Icon(Icons.edit,
-                size: 20, color: AppColors.groceryPrimary.withOpacity(0.8)),
-          ),
-        ),
-        const SizedBox(width: 5),
-        InkWell(
-          onTap: () {
-            setState(() {
-              Fluttertoast.showToast(
-                  msg: "Deleted Successfully",
-                  textColor: AppColors.groceryWhite,
-                  backgroundColor: AppColors.groceryPrimary);
-              _hiddenReviews.add(index);
-            });
-          },
-          child: CircleAvatar(
-            radius: 15,
-            backgroundColor: AppColors.groceryBodyTwo,
-            child: Icon(Icons.delete,
-                size: 20, color: AppColors.grocerySecondary.withOpacity(0.8)),
-          ),
-        )
       ],
     );
   }
 
-  Widget _buildRatingStars(double rating) {
+  Widget _buildRatingStars({required ReviewData review}) {
     return Row(
       children: [
         Row(
           children: List.generate(5, (index) {
-            if (index < rating.floor()) {
+            if (index < review.rating!.floor()) {
               return const Icon(
                 Icons.star,
                 color: AppColors.groceryRating,
                 size: 18,
               );
-            } else if (index < rating && index + 1 > rating) {
+            } else if (index < review.rating! && index + 1 > review.rating!) {
               return const Icon(
                 Icons.star_half,
                 color: AppColors.groceryRating,
@@ -251,124 +172,6 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
             }
           }),
         ),
-        const SizedBox(width: 4),
-        Text(
-          "($rating)",
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-            color: AppColors.grocerySubTitle,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildEditReviewForm(Map<String, dynamic> review) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 10),
-        TextField(
-          controller: _commentController,
-          cursorColor: AppColors.grocerySubTitle.withOpacity(0.5),
-          decoration: InputDecoration(
-            labelText: 'Edit your comment',
-            labelStyle: const TextStyle(
-              color: AppColors.grocerySubTitle,
-              fontSize: 14,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: AppColors.groceryBorder,
-                width: 1.0,
-              ),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: AppColors.groceryBorder,
-                width: 1.0,
-              ),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-          ),
-          style: const TextStyle(
-            color: AppColors.grocerySubTitle,
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-          ),
-          maxLines: 3,
-        ),
-        Row(
-          children: List.generate(5, (index) {
-            return IconButton(
-              icon: Icon(
-                index < _editingRating.floor()
-                    ? Icons.star
-                    : index < _editingRating && index + 1 > _editingRating
-                        ? Icons.star_half
-                        : Icons.star_border,
-                color: AppColors.groceryRating,
-                size: 18,
-              ),
-              onPressed: () {
-                setState(() {
-                  _editingRating = index + 1.0;
-                });
-              },
-            );
-          }),
-        ),
-        Row(
-          children: [
-            CustomElevatedButton(
-              buttonName: "Update",
-              onPressed: () {
-                setState(() {
-                  if (_editingIndex != null) {
-                    myReviews[_editingIndex!] = {
-                      ...myReviews[_editingIndex!],
-                      'comment': _editingComment,
-                      'rating': _editingRating,
-                    };
-                    _editingIndex = null;
-                    _editingComment = '';
-                    _editingRating = 0.0;
-                    _commentController.clear();
-                    Fluttertoast.showToast(
-                        msg: "Updated Successfully",
-                        textColor: AppColors.groceryWhite,
-                        backgroundColor: AppColors.groceryPrimary);
-                  }
-                });
-              },
-            ),
-            const SizedBox(width: 8),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _editingIndex = null;
-                  _editingComment = '';
-                  _editingRating = 0.0;
-                  _commentController.clear();
-                });
-              },
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                backgroundColor: Colors.transparent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: AppColors.groceryPrimary),
-              ),
-            ),
-          ],
-        )
       ],
     );
   }

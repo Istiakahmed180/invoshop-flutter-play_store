@@ -1,18 +1,18 @@
 import 'dart:convert';
 
-import 'package:ai_store/common/controller/checkout_controller.dart';
-import 'package:ai_store/common/controller/wish_cart_list_controller.dart';
-import 'package:ai_store/common/model/country_model.dart';
-import 'package:ai_store/config/routes/routes.dart';
-import 'package:ai_store/constants/app_colors.dart';
-import 'package:ai_store/network/api/api_path.dart';
-import 'package:ai_store/network/response/status.dart';
-import 'package:ai_store/network/services/network_services.dart';
-import 'package:ai_store/screens/home/model/products_model.dart';
-import 'package:ai_store/screens/profile/models/coupon_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:invoshop/common/controller/checkout_controller.dart';
+import 'package:invoshop/common/controller/wish_cart_list_controller.dart';
+import 'package:invoshop/common/model/country_model.dart';
+import 'package:invoshop/config/routes/routes.dart';
+import 'package:invoshop/constants/app_colors.dart';
+import 'package:invoshop/network/api/api_path.dart';
+import 'package:invoshop/network/response/status.dart';
+import 'package:invoshop/network/services/network_services.dart';
+import 'package:invoshop/screens/home/model/products_model.dart';
+import 'package:invoshop/screens/profile/models/coupon_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MakePaymentController extends GetxController {
@@ -38,7 +38,6 @@ class MakePaymentController extends GetxController {
   final shippingLastName = TextEditingController();
   final shippingEmail = TextEditingController();
   final shippingPhone = TextEditingController();
-  final RxInt shippingCountryId = 0.obs;
   final shippingCity = TextEditingController();
   final shippingZipCode = TextEditingController();
   final shippingAddress = TextEditingController();
@@ -109,7 +108,6 @@ class MakePaymentController extends GetxController {
       shippingLastName.text = billerLastName.text;
       shippingEmail.text = billerEmail.text;
       shippingPhone.text = billerPhone.text;
-      shippingCountryId.value = billerCountryId.value;
       shippingCity.text = billerCity.text;
       shippingZipCode.text = billerZipCode.text;
       shippingAddress.text = billerAddress.text;
@@ -119,7 +117,6 @@ class MakePaymentController extends GetxController {
       shippingLastName.clear();
       shippingEmail.clear();
       shippingPhone.clear();
-      shippingCountryId.value = 0;
       shippingCity.clear();
       shippingZipCode.clear();
       shippingAddress.clear();
@@ -202,7 +199,9 @@ class MakePaymentController extends GetxController {
       if (response.status == Status.completed) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           wishListAndCartListController.cartProductsList.clear();
+          wishListAndCartListController.wishlistProductList.clear();
           wishListAndCartListController.cartItemCount.value = 0;
+          wishListAndCartListController.wishlistItemCount.value = 0;
         });
         Get.offNamed(BaseRoute.home);
         Fluttertoast.showToast(
